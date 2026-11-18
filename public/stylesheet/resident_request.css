@@ -287,11 +287,9 @@ body {
 
 /* STATUS LIST — matches resident_dashboard.css's .status-card/.status-row */
 .status-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .status-row {
@@ -300,7 +298,10 @@ body {
     gap: 18px;
     align-items: center;
     padding: 18px 22px;
-    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
     opacity: 0;
     transform: translateY(6px);
     animation: rowIn .35s ease forwards;
@@ -311,10 +312,6 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.status-row:last-child {
-    border-bottom: none;
 }
 
 .status-row:hover {

@@ -12,7 +12,8 @@
 
 <body>
   @if ($readyRequest)
-    <div class="ready-toast" id="ready-toast">
+    <div class="ready-toast" id="ready-toast" data-request-id="{{ $readyRequest->id }}"
+      data-dismissal-scope="{{ $notificationScope }}">
       <a class="ready-toast-link"
         href="{{ url('/resident/tracking') }}?tracking_no={{ urlencode($readyRequest->tracking_code ?? '') }}&amp;auto_track=1">
         <div class="ready-toast-icon"><i class="ti ti-package"></i></div>

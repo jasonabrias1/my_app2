@@ -31,6 +31,16 @@ class ResidentLoginPageTest extends TestCase
             ->assertRedirect('/resident/login');
     }
 
+    public function test_tracking_page_shows_help_when_no_request_is_searched(): void
+    {
+        $this->withSession([
+            'resident_id' => 1,
+            'resident_name' => 'Resident Tester',
+        ])->get('/resident/tracking')
+            ->assertOk()
+            ->assertSee('Looking for a request? Type a code into the search bar to get started');
+    }
+
     public function test_resident_request_form_is_connected_to_the_resident_session(): void
     {
         $this->get('/resident/submit')
@@ -76,7 +86,18 @@ class ResidentLoginPageTest extends TestCase
                 ->assertSee('script/logout_animation.js')
                 ->assertSee(route('resident.logout'), false)
                 ->assertSee('script/resident_submit.js')
+                ->assertSee('maxlength="11"', false)
+                ->assertSee('"first_name":"Resident"', false)
+                ->assertSee('"email_address":"resident@example.com"', false)
                 ->assertSee('resident/submit');
+
+            $this->withSession([
+                'resident_id' => 1,
+                'resident_name' => 'Resident Tester',
+                'resident_submit_success' => 'BR-2026-ABC123',
+            ])->get('/resident/submit')
+                ->assertOk()
+                ->assertSee('window.location.href = ' . json_encode(route('resident.requests')) . ';', false);
         } finally {
             Schema::dropIfExists('residents');
         }
@@ -164,6 +185,27 @@ class ResidentLoginPageTest extends TestCase
                 'resident_name' => 'Resident Tester',
             ])->get('/resident/dashboard/attachments/' . $request->attachment_photo)
                 ->assertOk();
+
+            $this->from('/resident/submit')
+                ->withSession([
+                    'resident_id' => 1,
+                    'resident_name' => 'Resident Tester',
+                ])
+                ->post('/resident/submit', [
+                    'request_type' => 'Certificate of Residency',
+                    'purpose' => 'School enrollment',
+                    'relationship_to_resident' => 'You',
+                    'first_name' => 'Resident',
+                    'last_name' => 'Tester',
+                    'address_purok' => 'Purok 1',
+                    'civil_status' => 'Single',
+                    'nationality' => 'Filipino',
+                    'date_of_birth' => '2000-01-01',
+                    'place_of_birth' => 'Homestead',
+                    'mobile_number' => '091234567890',
+                ])
+                ->assertRedirect('/resident/submit')
+                ->assertSessionHasErrors('mobile_number');
         } finally {
             Schema::dropIfExists('document_requests');
         }
@@ -311,6 +353,16 @@ class ResidentLoginPageTest extends TestCase
             $this->withSession([
                 'resident_id' => 1,
                 'resident_name' => 'Resident Tester',
+            ])->get('/resident/tracking')
+                ->assertOk()
+                ->assertSee('Looking for a request? Type a code into the search bar to get started')
+                ->assertDontSee('Your Requests')
+                ->assertDontSee('BR-2026-ABC123')
+                ->assertDontSee('School enrollment');
+
+            $this->withSession([
+                'resident_id' => 1,
+                'resident_name' => 'Resident Tester',
             ])->get('/resident/requests')
                 ->assertOk()
                 ->assertSee('My Requests')
@@ -324,6 +376,7 @@ class ResidentLoginPageTest extends TestCase
                 ->assertOk()
                 ->assertSee('Track a Request')
                 ->assertSee('School enrollment')
+                ->assertDontSee('Looking for a request? Type a code into the search bar to get started')
                 ->assertSee('resident_tracking.js');
 
             $this->withSession([
@@ -332,6 +385,29 @@ class ResidentLoginPageTest extends TestCase
             ])->get('/resident/tracking?auto_track=1&tracking_no=BR-2026-ABC123')
                 ->assertOk()
                 ->assertSee('Certificate of Residency');
+
+            $this->withSession([
+                'resident_id' => 1,
+                'resident_name' => 'Resident Tester',
+            ])->get('/resident/dashboard')
+                ->assertOk()
+                ->assertDontSee('Ready for pickup')
+                ->assertHeader('Cache-Control', 'no-store, private, max-age=0');
+
+            DB::table('document_requests')
+                ->where('tracking_code', 'BR-2026-ABC123')
+                ->update(['status' => 'For Pick Up']);
+
+            $this->withSession([
+                'resident_id' => 1,
+                'resident_name' => 'Resident Tester',
+            ])->get('/resident/dashboard')
+                ->assertOk()
+                ->assertSee('Ready for pickup')
+                ->assertSee('BR-2026-ABC123')
+                ->assertSee('data-request-id="1"', false)
+                ->assertSee('data-dismissal-scope=', false)
+                ->assertHeader('Cache-Control', 'no-store, private, max-age=0');
 
             $this->withSession([
                 'resident_id' => 1,

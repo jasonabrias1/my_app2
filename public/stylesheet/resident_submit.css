@@ -246,6 +246,7 @@ body {
     display: flex;
     align-items: center;
     flex: 1 1 auto;
+    gap: 8px;
     min-width: 0;
 }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -21,12 +22,18 @@ class ResidentDashboardController extends Controller
         'relationship_proof',
     ];
 
-    public function index(Request $request): View|RedirectResponse
+    public function index(Request $request): View|Response|RedirectResponse
     {
         $residentId = $request->session()->get('resident_id');
 
         if (! $residentId) {
             return redirect()->route('resident.login');
+        }
+
+        $notificationScope = $request->session()->get('resident_notification_scope');
+        if (! is_string($notificationScope) || $notificationScope === '') {
+            $notificationScope = (string) Str::uuid();
+            $request->session()->put('resident_notification_scope', $notificationScope);
         }
 
         $userName = $request->session()->get('resident_name', 'Resident');
@@ -55,20 +62,23 @@ class ResidentDashboardController extends Controller
             ->get();
 
         $readyRequest = DB::table('document_requests')
-            ->select(['document_type', 'tracking_code'])
+            ->select(['id', 'document_type', 'tracking_code'])
             ->where('resident_id', $residentId)
             ->where('status', 'For Pick Up')
             ->orderByDesc('request_date')
             ->first();
 
-        return view('resident.dashboard', compact(
+        return response()->view('resident.dashboard', compact(
             'userName',
             'initials',
             'statusLabels',
             'badgeMap',
             'recentRequests',
             'readyRequest',
-        ));
+            'notificationScope',
+        ))->header('Cache-Control', 'no-store, private, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     public function attachment(Request $request, string $filename): BinaryFileResponse|RedirectResponse

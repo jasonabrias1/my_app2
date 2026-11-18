@@ -12,18 +12,27 @@
         .audit-pager a, .audit-pager span.disabled { padding: 7px 14px; border-radius: 8px; border: 1px solid #d1d5db; text-decoration: none; color: inherit; }
         .audit-pager span.disabled { opacity: .45; }
         .audit-table td:first-child { white-space: nowrap; }
-        .audit-table th, .audit-table td { text-align: left; vertical-align: top; }
+        .audit-table { table-layout: fixed; }
+        .audit-table th, .audit-table td { text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+        .audit-table th:first-child { width: 160px; }
+        .audit-table th:nth-child(2) { width: 15%; }
+        .audit-table th:nth-child(3) { width: 10%; }
+        .audit-table th:nth-child(4) { width: 20%; }
+        @media screen and (min-width: 1001px) {
+            .audit-main { display: flex; flex-direction: column; }
+            .audit-panel { flex: 1 0 auto; display: flex; flex-direction: column; }
+            .audit-pager { margin-top: auto; padding-top: 16px; }
+        }
     </style>
 </head>
 <body>
     @include('admin.partials.sidebar')
 
-    <div class="main">
+    <div class="main audit-main">
         <div class="topbar">
-            <h2>Audit Trail</h2>
             <div class="who">Signed in as <b>{{ $admin_name }}</b></div>
         </div>
-        <div class="panel">
+        <div class="panel audit-panel">
             <h3>Activity Log</h3>
             @if ($logs->isEmpty())
                 <div class="empty-state"><i class="fas fa-clock-rotate-left"></i>No activity found.</div>

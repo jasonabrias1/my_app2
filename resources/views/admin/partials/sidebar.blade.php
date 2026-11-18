@@ -9,6 +9,8 @@
 <div class="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <div class="sidebar" id="sidebar">
+    @php($currentDashboardView = request()->routeIs('admin.dashboard') ? ($view ?? request()->query('view', 'overview')) : null)
+    @php($isRequestView = in_array($currentDashboardView, ['pending', 'pickup', 'completed'], true))
     <button type="button" class="sidebar-close" onclick="closeSidebar()" aria-label="Close menu"><i
             class="fas fa-xmark"></i></button>
     <div class="brand">
@@ -20,29 +22,34 @@
     </div>
 
     <a href="{{ route('admin.dashboard', ['view' => 'overview']) }}"
-        class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+        class="nav-link {{ $currentDashboardView === 'overview' ? 'active' : '' }}">
         <span><i class="fas fa-grip nav-icon"></i>Dashboard</span>
     </a>
 
     @php($docRequestsTotal = ($counts['Pending'] ?? 0) + ($counts['PickUp'] ?? 0) + ($counts['Released'] ?? 0))
-    <button type="button" class="nav-link nav-parent-toggle" onclick="toggleNavGroup('doc-requests')"
+    <button type="button" class="nav-link nav-parent-toggle {{ $isRequestView ? 'expanded' : '' }}"
+        aria-expanded="{{ $isRequestView ? 'true' : 'false' }}" aria-controls="doc-requests-submenu"
+        onclick="toggleNavGroup('doc-requests')"
         style="text-align:left;padding:11px 6px 11px 12px;gap:4px;">
         <span style="white-space:nowrap;font-size:12.5px;"><i class="fas fa-folder-open nav-icon" style="width:15px;margin-right:5px;"></i>Document Requests</span>
         <span style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
             <span class="nav-badge" style="padding:1px 5px;font-size:10px;">{{ $docRequestsTotal }}</span>
-            <i class="fas fa-chevron-down nav-chevron" id="doc-requests-chevron" style="font-size:10px;"></i>
+            <i class="fas fa-chevron-down nav-chevron" style="font-size:10px;"></i>
         </span>
     </button>
-    <div class="nav-submenu" id="doc-requests-submenu">
-        <a href="{{ route('admin.dashboard', ['view' => 'pending']) }}" class="nav-link nav-sublink">
+    <div class="nav-submenu {{ $isRequestView ? 'open' : '' }}" id="doc-requests-submenu">
+        <a href="{{ route('admin.dashboard', ['view' => 'pending']) }}"
+            class="nav-link nav-sublink {{ $currentDashboardView === 'pending' ? 'active' : '' }}">
             <span><i class="fas fa-hourglass-half nav-icon"></i>Pending</span>
             <span class="nav-badge">{{ $counts['Pending'] ?? 0 }}</span>
         </a>
-        <a href="{{ route('admin.dashboard', ['view' => 'pickup']) }}" class="nav-link nav-sublink">
+        <a href="{{ route('admin.dashboard', ['view' => 'pickup']) }}"
+            class="nav-link nav-sublink {{ $currentDashboardView === 'pickup' ? 'active' : '' }}">
             <span><i class="fas fa-box-archive nav-icon"></i>For Pick Up</span>
             <span class="nav-badge">{{ $counts['PickUp'] ?? 0 }}</span>
         </a>
-        <a href="{{ route('admin.dashboard', ['view' => 'completed']) }}" class="nav-link nav-sublink">
+        <a href="{{ route('admin.dashboard', ['view' => 'completed']) }}"
+            class="nav-link nav-sublink {{ $currentDashboardView === 'completed' ? 'active' : '' }}">
             <span><i class="fas fa-circle-check nav-icon"></i>Completed</span>
             <span class="nav-badge">{{ $counts['Released'] ?? 0 }}</span>
         </a>

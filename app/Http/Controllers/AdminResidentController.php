@@ -44,7 +44,7 @@ class AdminResidentController extends Controller
             'nationality' => ['required', 'string', 'max:100'],
             'date_of_birth' => ['required', 'date'],
             'place_of_birth' => ['required', 'string', 'max:255'],
-            'mobile_number' => ['required', 'regex:/^09\d{9}$/'],
+            'mobile_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'unique:residents,mobile_number'],
             'email' => ['required', 'email', 'max:100', 'unique:residents,email'],
             'password' => ['required', 'string', 'min:8'],
             'confirm_password' => ['required', 'same:password'],
@@ -52,6 +52,7 @@ class AdminResidentController extends Controller
             'address_purok.in' => 'Please select a valid Sitio / Purok.',
             'civil_status.in' => 'Please select a valid civil status.',
             'mobile_number.regex' => 'Mobile number must be in the format 09xxxxxxxxx.',
+            'mobile_number.unique' => 'An account with that mobile number already exists.',
             'email.unique' => 'An account with that email already exists.',
             'confirm_password.same' => 'Passwords do not match.',
         ]);

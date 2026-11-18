@@ -60,6 +60,17 @@ function setupRequestForm(form, relationshipSelect) {
         var personalInfoState = null;
 
         var userEditedPersonalInfo = false;
+        var requestorInfoInitialized = false;
+
+        var REQUESTOR_INFO_FIELDS = [
+            ['requestor_first_name', 'first_name'],
+            ['requestor_middle_name', 'middle_name'],
+            ['requestor_last_name', 'last_name'],
+            ['requestor_suffix', 'suffix'],
+            ['requestor_address', 'address_purok'],
+            ['requestor_mobile_number', 'mobile_number'],
+            ['requestor_email_address', 'email_address']
+        ];
 
          function blockLockedSelect(e) {
         if (this.getAttribute('data-locked') == 'true') e.preventDefault();
@@ -186,6 +197,22 @@ function setupRequestForm(form, relationshipSelect) {
             // Business Clearance extras
             showOrHide('biz_fields', isBiz, 'block');
             setRequired(['business_name', 'business_nature', 'business_address'], isBiz);
+        }
+
+        function syncRequestorInfo() {
+            if (isSelf() || requestorInfoInitialized) return;
+
+            for (var i = 0; i < REQUESTOR_INFO_FIELDS.length; i++) {
+                var fieldName = REQUESTOR_INFO_FIELDS[i][0];
+                var residentField = REQUESTOR_INFO_FIELDS[i][1];
+                var field = form.querySelector('[name="' + fieldName + '"]');
+
+                if (field && field.value === '') {
+                    field.value = RESIDENT_INFO[residentField] || '';
+                }
+            }
+
+            requestorInfoInitialized = true;
         }
 
         function setFieldLocked(field, locked) {
@@ -364,6 +391,7 @@ function setupRequestForm(form, relationshipSelect) {
         relationshipSelect.addEventListener('change', function () {
             updateRequestorRequired();
             syncPersonalInfo();
+            syncRequestorInfo();
         });
 
         document.getElementById('request_type').addEventListener('change', updateRequestorRequired);

@@ -111,13 +111,6 @@ class ResidentRequestController extends Controller
             }
         }
 
-        $myRequests = DB::table('document_requests')
-            ->where('resident_id', $residentId)
-            ->orderByDesc('request_date')
-            ->get()
-            ->map(fn ($row) => (array) $row)
-            ->all();
-
         $statusLabels = [
             'Pending' => 'Pending',
             'For Pick Up' => 'For Pick Up',
@@ -145,7 +138,6 @@ class ResidentRequestController extends Controller
             'trackingCode',
             'record',
             'notFound',
-            'myRequests',
             'steps',
             'stepKeys',
             'currentStepIndex',

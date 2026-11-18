@@ -13,7 +13,6 @@
 
     <div class="main">
         <div class="topbar">
-            <h2>Resident Accounts</h2>
             <div class="who">Signed in as <b>{{ $admin_name }}</b></div>
         </div>
         <div class="panel">

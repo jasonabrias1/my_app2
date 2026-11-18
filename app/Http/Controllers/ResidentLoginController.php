@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ResidentLoginController extends Controller
@@ -76,6 +77,7 @@ class ResidentLoginController extends Controller
             'resident_id' => $resident->id,
             'resident_name' => $resident->fullname,
             'resident_email' => $resident->email,
+            'resident_notification_scope' => (string) Str::uuid(),
         ]);
         $this->logResident('Logged in');
 

@@ -23,6 +23,7 @@ window.addEventListener('resize', function () { if (window.innerWidth > 1000) cl
 function toggleNavGroup(groupId) {
     var submenu = document.getElementById(groupId + '-submenu');
     var toggleBtn = submenu.previousElementSibling;
-    submenu.classList.toggle('open');
-    toggleBtn.classList.toggle('active');
+    var isOpen = submenu.classList.toggle('open');
+    toggleBtn.classList.toggle('expanded', isOpen);
+    toggleBtn.setAttribute('aria-expanded', String(isOpen));
 }

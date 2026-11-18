@@ -55,7 +55,7 @@
             var notifTrackingCode = @json(session('resident_submit_success'));
             document.getElementById('btn-done').focus();
             document.getElementById('btn-done').addEventListener('click', function () {
-                window.location.href = @json(route('resident.dashboard'));
+                window.location.href = @json(route('resident.requests'));
             });
             document.getElementById('btn-track').addEventListener('click', function () {
                 window.location.href = '/resident/tracking?auto_track=1&tracking_no=' + encodeURIComponent(notifTrackingCode);
@@ -312,7 +312,7 @@
                             <div class="form-group">
                                 <label>Mobile Number <span class="req-mark">*</span></label>
                                 <input type="tel" name="mobile_number" placeholder="09xxxxxxxxx" pattern="09[0-9]{9}"
-                                    required>
+                                    maxlength="11" inputmode="numeric" required>
                                 <div class="required-note" style="text-align:left;">
                                     <span class="req-mark">Note:</span>
                                     <small>Kindly input your active/operational cellular number.</small>
@@ -369,7 +369,7 @@
                             <div class="form-group">
                                 <label>Your Mobile Number <span class="req-mark">*</span></label>
                                 <input type="tel" name="requestor_mobile_number" id="requestor_mobile_number"
-                                    placeholder="09xxxxxxxxx" pattern="09[0-9]{9}">
+                                    placeholder="09xxxxxxxxx" pattern="09[0-9]{9}" maxlength="11" inputmode="numeric">
                             </div>
                             <div class="form-group">
                                 <label>Your Email Address <span class="opt">(optional)</span></label>

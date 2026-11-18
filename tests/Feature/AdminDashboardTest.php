@@ -101,10 +101,21 @@ class AdminDashboardTest extends TestCase
             'pickup' => 'For Pick Up',
             'completed' => 'Completed Requests',
         ] as $tab => $title) {
-            $this->withSession(['admin_id' => 1])
-                ->get(route('admin.dashboard', ['view' => $tab]))
+            $response = $this->withSession(['admin_id' => 1])
+                ->get(route('admin.dashboard', ['view' => $tab]));
+
+            $response
                 ->assertOk()
-                ->assertSee($title);
+                ->assertSee($title)
+                ->assertSee('class="nav-link nav-sublink active"', false)
+                ->assertDontSee('class="nav-link active"', false)
+                ->assertSee('class="nav-submenu open"', false)
+                ->assertSee('aria-expanded="true"', false);
+
+            $this->assertMatchesRegularExpression(
+                '/<a href="'.preg_quote(route('admin.dashboard', ['view' => $tab]), '/').'"[^>]*class="nav-link nav-sublink active">/',
+                $response->getContent()
+            );
         }
     }
 
@@ -134,7 +145,9 @@ class AdminDashboardTest extends TestCase
             ->assertSee('March 9, 2026')
             ->assertSee('BR-APR-PENDING')
             ->assertSee('Jordan Resident')
-            ->assertSee('statusValues: [1,1,0]', false);
+            ->assertSee('statusValues: [1,1,0]', false)
+            ->assertSee('id="analytics-filter"', false)
+            ->assertSee('action="'.route('admin.dashboard').'#analytics-filter"', false);
     }
 
     public function test_pickup_status_update_releases_request_and_writes_audit_entry(): void

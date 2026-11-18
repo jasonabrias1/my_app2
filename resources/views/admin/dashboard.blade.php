@@ -112,9 +112,9 @@
                 @endif
             </div>
 
-            <div class="panel">
+            <div class="panel" id="analytics-filter">
                 <h3>Analytics Filter</h3>
-                <form method="get" action="{{ route('admin.dashboard') }}"
+                <form method="get" action="{{ route('admin.dashboard') }}#analytics-filter"
                     style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:0;">
                     <input type="hidden" name="view" value="overview">
                     <label style="display:flex;flex-direction:column;font-size:12px;gap:4px;">Month
@@ -189,8 +189,11 @@
                     <div class="{{ $view === 'pickup' ? 'table-scroll' : '' }}">
                         <table class="resp-table{{ $view === 'pickup' ? ' pickup-table' : '' }}">
                             <tr class="pt-head">
-                                <th>Tracking Code</th><th>Requestor</th><th>Document Type</th><th>Purpose</th>
-                                <th>Contact</th><th>Date Filed</th><th>Status</th>
+                                <th>Tracking Code</th><th>Requestor</th><th>Document Type</th>
+                                @if ($view === 'completed')
+                                    <th>Purpose</th><th>Contact</th><th>Status</th>
+                                @endif
+                                <th>Date Filed</th>
                                 @if ($view !== 'completed') <th>Details</th> @endif
                                 @if ($view === 'pickup')
                                     <th>Notify</th><th>Update Status</th>
@@ -203,10 +206,12 @@
                                     <td data-label="Tracking Code">{{ $r['tracking_code'] ?? '' }}</td>
                                     <td data-label="Requestor">{{ trim(($r['first_name'] ?? '').' '.($r['middle_name'] ?? '').' '.($r['last_name'] ?? '').' '.($r['suffix'] ?? '')) }}</td>
                                     <td data-label="Document Type">{{ $r['document_type'] ?? '' }}</td>
-                                    <td data-label="Purpose">{{ $r['purpose'] ?? '' }}</td>
-                                    <td data-label="Contact">{{ $r['mobile_number'] ?? '' }}@if (!empty($r['email_address']))<br>{{ $r['email_address'] }}@endif</td>
+                                    @if ($view === 'completed')
+                                        <td data-label="Purpose">{{ $r['purpose'] ?? '' }}</td>
+                                        <td data-label="Contact">{{ $r['mobile_number'] ?? '' }}@if (!empty($r['email_address']))<br>{{ $r['email_address'] }}@endif</td>
+                                        <td data-label="Status"><span class="badge {{ $status_badge_class[$r['status']] ?? '' }}">{{ $status_labels[$r['status']] ?? ($r['status'] ?? '') }}</span></td>
+                                    @endif
                                     <td data-label="Date Filed">{{ !empty($r['request_date']) ? \Carbon\Carbon::parse($r['request_date'])->format('M j, Y g:i A') : '' }}</td>
-                                    <td data-label="Status"><span class="badge {{ $status_badge_class[$r['status']] ?? '' }}">{{ $status_labels[$r['status']] ?? ($r['status'] ?? '') }}</span></td>
                                     @if ($view !== 'completed')
                                         <td data-label="Details">
                                             <button type="button" class="btn btn-view"

@@ -198,7 +198,7 @@
             transition: transform .2s;
         }
 
-        .nav-parent-toggle.active .nav-chevron {
+        .nav-parent-toggle.expanded .nav-chevron {
             transform: rotate(180deg);
         }
 
@@ -241,6 +241,7 @@
         .topbar .who {
             font-size: 13px;
             color: var(--muted);
+            margin-left: auto;
         }
 
         .topbar .who b {
@@ -846,6 +847,31 @@
 }
 
 @media screen and (min-width: 1001px) {
+    body:has(.sidebar) {
+        overflow: hidden;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        min-height: 0;
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    body:has(.sidebar) .main {
+        margin-left: 250px;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
     .stat-grid-4 {
         grid-template-columns: repeat(4, 1fr);
     }
@@ -916,6 +942,10 @@
         transform: translateX(-100%);
         visibility: hidden;
         transition: transform .25s ease, visibility 0s linear .25s;
+    }
+
+    .sidebar > * {
+        flex-shrink: 0;
     }
 
     .sidebar.open {

@@ -1,3 +1,4 @@
+(function () {
   var form = document.querySelector('form[method="POST"]');
   var emailInput = document.getElementById('admin-email');
   var passwordInput = document.getElementById('admin-password');
@@ -24,51 +25,59 @@
   }
 
   // Show/hide password
- toggleBtn.addEventListener('click', function () {
-  if (passwordInput.type == 'password') {
-    passwordInput.type = 'text';
-    toggleBtn.innerHTML = '<i class="fas fa-eye-slah"></i>';
-    toggleBtn.setAttribute('aria-label', 'Hide password');
-  }else{
-    passwordInput.type = 'password';
-    toggleBtn.innerHTML ='<i class="fas fa-eye"></i>';
-    toggleBtn.setAttribute('aria-label', 'Show password');
-  }
-});
+  toggleBtn.addEventListener('click', function () {
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>'; // fixed typo: slah -> slash
+      toggleBtn.setAttribute('aria-label', 'Hide password');
+    } else {
+      passwordInput.type = 'password';
+      toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+      toggleBtn.setAttribute('aria-label', 'Show password');
+    }
+  });
+
   // Live-clear errors as the person types
-    emailInput.addEventListener('input', function () {
-      clearError(emailInput, emailError);
-    });
-    passwordInput.addEventListener('input', function () {
-      clearError(passwordInput, passwordError);
-    });
+  emailInput.addEventListener('input', function () {
+    clearError(emailInput, emailError);
+  });
+  passwordInput.addEventListener('input', function () {
+    clearError(passwordInput, passwordError);
+  });
 
   // Client-side validation before the existing POST submit runs.
-    form.addEventListener('submit', function (e) {
-      var valid = true;
+  form.addEventListener('submit', function (e) {
+    var valid = true;
 
-      if (!emailInput.value.trim()) {
-        showError(emailInput, emailError, 'Email address is required.');
-        valid = false;
-      } else if (!isValidEmail(emailInput.value.trim())) {
-        showError(emailInput, emailError, 'Enter a valid email address.');
-        valid = false;
-      } else {
-        clearError(emailInput, emailError);
-      }
+    if (!emailInput.value.trim()) {
+      showError(emailInput, emailError, 'Email address is required.');
+      valid = false;
+    } else if (!isValidEmail(emailInput.value.trim())) {
+      showError(emailInput, emailError, 'Enter a valid email address.');
+      valid = false;
+    } else {
+      clearError(emailInput, emailError);
+    }
 
-      if (!passwordInput.value) {
-        showError(passwordInput, passwordError, 'Password is required.');
-        valid = false;
-      } else {
-        clearError(passwordInput, passwordError);
-      }
+    if (!passwordInput.value) {
+      showError(passwordInput, passwordError, 'Password is required.');
+      valid = false;
+    } else {
+      clearError(passwordInput, passwordError);
+    }
 
-      if (!valid) {
-        e.preventDefault();
-        return;
-      }
+    if (!valid) {
+      e.preventDefault();
+      return;
+    }
 
-      submitBtn.disabled = true;
-      submitLabel.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
-    });
+    submitBtn.disabled = true;
+    submitLabel.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+  });
+
+  // Kapag bumalik gamit ang back button, ibalik ang button state
+  window.addEventListener('pageshow', function () {
+    submitBtn.disabled = false;
+    submitLabel.textContent = 'Sign In';
+  });
+})();

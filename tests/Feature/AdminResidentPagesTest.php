@@ -87,6 +87,7 @@ class AdminResidentPagesTest extends TestCase
             ->assertOk()
             ->assertSee('Create Resident Account')
             ->assertSee('name="_token"', false)
+            ->assertSee('maxlength="11"', false)
             ->assertSee(route('admin.residents'), false)
             ->assertSee(route('admin.audit'), false);
 
@@ -100,6 +101,17 @@ class AdminResidentPagesTest extends TestCase
         $this->assertTrue(Hash::check('resident-password', $resident->password));
         $this->assertNotSame('resident-password', $resident->password);
         $this->assertSame('Created resident account', DB::table('audit_trail')->value('action'));
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->from(route('admin.accounts'))
+            ->post(route('admin.accounts.store'), array_merge(
+                $this->validResident(),
+                ['email' => 'another-resident@example.com'],
+            ))
+            ->assertRedirect(route('admin.accounts'))
+            ->assertSessionHasErrors('mobile_number');
+
+        $this->assertSame(1, DB::table('residents')->count());
     }
 
     public function test_resident_list_never_renders_password_and_status_can_be_toggled(): void
@@ -172,13 +184,19 @@ class AdminResidentPagesTest extends TestCase
             ->assertSee('21 records found')
             ->assertSee('Activity 21')
             ->assertDontSee('>Activity 1</td>', false)
-            ->assertSee('Page 1 of 2');
+            ->assertSee('Page 1 of 2')
+            ->assertSee('class="main audit-main"', false)
+            ->assertSee('class="panel audit-panel"', false)
+            ->assertSee('class="resp-table audit-table"', false);
 
         $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
             ->get(route('admin.audit', ['page' => 2]))
             ->assertOk()
             ->assertSee('Activity 1')
-            ->assertSee('Page 2 of 2');
+            ->assertSee('Page 2 of 2')
+            ->assertSee('class="main audit-main"', false)
+            ->assertSee('class="panel audit-panel"', false)
+            ->assertSee('class="resp-table audit-table"', false);
     }
 
     public function test_sms_notification_uses_provider_service_and_audits_success(): void

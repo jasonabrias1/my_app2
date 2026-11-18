@@ -37,11 +37,6 @@ class AdminWalkInController extends Controller
 
     private const RELATIONSHIPS = [
         'You',
-        'Mother/Father',
-        'Brother/Sister',
-        'Grandmother/Grandfather',
-        'Son/Daughter',
-        'Grandson/Granddaughter',
     ];
 
     private const JOB_SEEKER_ID_TYPES = [

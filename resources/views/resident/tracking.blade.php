@@ -85,6 +85,12 @@
 
         <div class="field-error" id="tracking-error"></div>
 
+        <?php if (! $record && ! $notFound): ?>
+            <div class="empty-state tracking-empty-state">
+                <p>Looking for a request? Type a code into the search bar to get started</p>
+            </div>
+        <?php endif; ?>
+
         <?php if ($notFound): ?>
             <div class="alert">
                 No request found with tracking number "<?php echo htmlspecialchars($trackingCode); ?>".
@@ -292,42 +298,6 @@
             </div>
         <?php endif; ?>
 
-        <div class="section-title">Your Requests</div>
-
-        <?php if (count($myRequests) === 0): ?>
-            <div class="empty-state">
-                <div class="empty-icon"><i class="ti ti-inbox"></i></div>
-                No requests found.
-                <p>Once you submit a request, you'll be able to follow its progress right here.</p>
-                <a href="{{ route('resident.submit') }}" class="empty-cta">Submit your first request <i
-                        class="ti ti-arrow-right"></i></a>
-            </div>
-        <?php else: ?>
-            <div class="pick-card">
-                <?php foreach ($myRequests as $row): ?>
-                    <?php
-                    $cls = $badgeMap[$row['status']] ?? "badge-pending";
-                    $rowJson = htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8');
-                    ?>
-                    <div class="pick-row" data-request="<?php echo $rowJson; ?>">
-                        <div class="pick-info">
-                            <strong><?php echo htmlspecialchars($row['document_type']); ?></strong>
-                            <small>
-                                #<?php echo htmlspecialchars($row['tracking_code']); ?>
-                                &nbsp;•&nbsp;
-                                <?php echo date("F j, Y", strtotime($row['request_date'])); ?>
-                            </small>
-                        </div>
-                        <span class="badge <?php echo $cls; ?>">
-                            <?php echo htmlspecialchars($statusLabels[$row['status']] ?? $row['status']); ?>
-                        </span>
-                        <button type="button" class="view-btn">
-                            <i class="ti ti-eye"></i> View
-                        </button>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
     </main>
 
     <!-- REQUEST DETAILS MODAL -->

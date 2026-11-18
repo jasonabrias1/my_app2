@@ -288,13 +288,33 @@ function setupMobileSidebar() {
 function setupReadyToast() {
     var toast = document.getElementById('ready-toast');
     var closeBtn = document.getElementById('ready-toast-close');
-    if (toast && closeBtn) {
-        closeBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            toast.remove();
-        });
+    if (!toast) return;
+
+    var requestId = toast.getAttribute('data-request-id');
+    var dismissalScope = toast.getAttribute('data-dismissal-scope');
+    var dismissedKey = requestId && dismissalScope
+        ? 'dismissedReadyRequest:' + dismissalScope + ':' + requestId
+        : '';
+    if (dismissedKey) {
+        try {
+            if (window.localStorage.getItem(dismissedKey) === '1') {
+                toast.remove();
+                return;
+            }
+        } catch (e) {}
     }
+
+    if (!closeBtn) return;
+    closeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (dismissedKey) {
+            try {
+                window.localStorage.setItem(dismissedKey, '1');
+            } catch (e) {}
+        }
+        toast.remove();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -302,4 +322,10 @@ document.addEventListener('DOMContentLoaded', function () {
     setupReadyToast();
     // The dashboard's rows are .status-row (the tracking page uses .pick-row)
     setupDetailsModal('.status-row');
+});
+
+window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
 });

@@ -64,7 +64,7 @@
             @endif
 
             <form method="POST" id="walkinForm"
-                  action="{{ \Illuminate\Support\Facades\Route::has('admin.walkin') ? route('admin.walkin') : url('/admin/walkin') }}">
+                  action="{{ \Illuminate\Support\Facades\Route::has('admin.walkin.store') ? route('admin.walkin.store') : url('/admin/walkin') }}">
                 @csrf
 
                 <div class="form-section-title">Document</div>
@@ -81,13 +81,8 @@
                     </div>
                     <div class="form-group">
                         <label>Relationship to the Resident <span class="req-mark">*</span></label>
-                        <select name="relationship_to_resident" id="relationship_to_resident" required>
-                            @foreach ($relationships as $relationship)
-                                <option value="{{ $relationship }}" @selected($values['relationship_to_resident'] === $relationship)>
-                                    {{ $relationship === 'You' ? 'Resident (self)' : $relationship }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <input type="hidden" name="relationship_to_resident" id="relationship_to_resident" value="You">
+                        <input type="text" value="Resident (self)" readonly>
                     </div>
                 </div>
 

@@ -565,6 +565,14 @@ body {
     font-size: 13px;
 }
 
+.tracking-empty-state {
+    padding: 28px 20px;
+}
+
+.tracking-empty-state p {
+    font-size: 14px;
+}
+
 .empty-state .empty-cta {
     display: inline-flex;
     align-items: center;
