@@ -1,0 +1,57 @@
+.logout-animation {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    display: grid;
+    place-items: center;
+    background: rgba(20, 27, 21, 0.88);
+    color: #fff;
+    font-family: "Segoe UI", Arial, sans-serif;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+}
+
+.logout-animation.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.logout-animation__panel {
+    text-align: center;
+}
+
+.logout-animation__spinner {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 12px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #e8c879;
+    border-radius: 50%;
+    animation: logoutSpinner 700ms linear infinite;
+}
+
+.logout-animation__message {
+    margin: 0;
+    font-size: 15px;
+}
+
+body.logout-in-progress {
+    overflow: hidden;
+}
+
+@keyframes logoutSpinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .logout-animation {
+        transition: none;
+    }
+
+    .logout-animation__spinner {
+        animation: none;
+    }
+}

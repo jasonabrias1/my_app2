@@ -1,0 +1,288 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+html {
+  display: block;
+  min-height: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* ---------- Card ---------- */
+.container {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+}
+
+/* ---------- Left panel ---------- */
+.left-panel {
+  flex: 1;
+  background: #2b1c10;
+  color: white;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.back-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: .8;
+  transition: .3s;
+}
+
+.back-link:hover {
+  opacity: 1;
+}
+
+
+.brand-header,
+.logo-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.logo-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: white;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+}
+
+.logo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brand-text h2,
+.logo-text h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.location {
+  font-size: 12px;
+  opacity: .85;
+}
+
+.tagline {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, .2);
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: .9;
+}
+
+/* ---------- Right panel ---------- */
+.right-panel {
+  flex: 1;
+  background: white;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.right-panel h3 {
+  text-align: center;
+  color: #1a1a1a;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.sub-text {
+  text-align: center;
+  color: #6b5b4a;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+
+/* ---------- Form ---------- */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3b2b1c;
+}
+
+input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #c9bba5;
+  border-radius: 10px;
+  outline: none;
+  transition: .3s;
+  font-size: 14px;
+}
+
+input:focus {
+  border-color: #5a3e26;
+  box-shadow: 0 0 0 4px rgba(90, 62, 38, .12);
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #2b1c10;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+
+button:hover {
+  background: #1a110a;
+}
+
+button[type="submit"]:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+}
+
+/* ---------- Password show/hide ---------- */
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  padding-right: 44px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6b5b4a;
+  width: 32px;
+  padding: 0;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.toggle-password:hover {
+  background: none;
+  color: #2b1c10;
+}
+
+/* ---------- Validation / errors ---------- */
+.field-error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  min-height: 14px;
+  display: none;
+}
+
+.field-error.show {
+  display: block;
+}
+
+input.invalid {
+  border-color: red;
+  box-shadow: 0 0 0 4px rgba(58, 58, 58, .1);
+}
+
+
+.error-message,
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+/* ---------- Browser autofill ---------- */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  -webkit-text-fill-color: #1a1a1a;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 700px) {
+
+  body {
+    padding: 12px;
+  }
+
+  .container {
+    flex-direction: column;
+    max-width: 440px;
+  }
+
+  .left-panel {
+    padding: 56px 20px 24px;
+  }
+
+  .logo-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .right-panel {
+    padding: 24px 20px 28px;
+  }
+
+  .right-panel h3 {
+    font-size: 21px;
+  }
+
+  .back-link {
+    padding: 6px;
+    top: 14px;
+    left: 14px;
+  }
+
+  input {
+    font-size: 16px;
+  }
+}

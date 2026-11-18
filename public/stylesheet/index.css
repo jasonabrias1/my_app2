@@ -1,0 +1,149 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Segoe UI, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+}
+
+.header {
+    background: #2b1c10;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: white;
+    margin: auto;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.header h1 {
+    margin-top: 10px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.header p {
+    font-size: 12px;
+    opacity: .9;
+    margin-top: 5px;
+}
+
+.content {
+    padding: 25px;
+}
+
+.content h2 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 5px;
+    color: #1a1a1a;
+}
+
+.content p {
+    text-align: center;
+    color: #6b5b4a;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.portal-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    background: #faf7f2;
+    border: 1px solid #c9bba5;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    color: #2b1c10;
+    transition: .3s;
+}
+
+.portal-btn:hover {
+    background: #f0e8db;
+    border-color: #5a3e26;
+    transform: translateY(-2px);
+}
+
+.portal-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.portal-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #e6dac6;
+    color: #000000;
+    font-size: 17px;
+    flex-shrink: 0;
+}
+
+.portal-text strong {
+    display: block;
+    font-size: 15px;
+    color: #1a1a1a;
+}
+
+.portal-text small {
+    display: block;
+    font-size: 12px;
+    color: #6b5b4a;
+    margin-top: 2px;
+}
+
+.arrow {
+    color: #6b5b4a;
+    font-size: 14px;
+}
+
+.footer {
+    background: #faf7f2;
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: #6b5b4a;
+    border-top: 1px solid #ddd0ba;
+}
+
+@media(max-width:600px) {
+    .container {
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,35 @@
+/* Success messages: brown instead of green */
+.flash.success { background: #f5ece4; border: 1px solid #e2cdbb; color: #6b4a3a; }
+.sys-icon.success { background: #f5ece4; color: #6b4a3a; }
+
+/* Brown theme for Pending / For Pick Up / Notified */
+.badge-pending, .badge-pickup, .icon-pending, .icon-pickup { background: none; color: #6b4a3a; }
+.btn.notified, .btn.notified:disabled { background: none; color: #6b4a3a; cursor: default; opacity: 1; }
+
+/* 5 stat cards in one row (no horizontal scroll) */
+.stat-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; overflow: visible; }
+.stat-grid .stat-card { min-width: 0; }
+@media (max-width: 1100px) { .stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* In-system notification / confirmation dialog */
+.sys-overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, .55); z-index: 3000; align-items: center; justify-content: center; padding: 16px; }
+.sys-overlay.open { display: flex; }
+.sys-box { background: #fff; width: 100%; max-width: 400px; border-radius: 14px; padding: 28px 24px 22px; text-align: center; box-shadow: 0 12px 40px rgba(0, 0, 0, .3); animation: sysIn .2s ease-out; }
+@keyframes sysIn { from { opacity: 0; transform: translateY(-8px) scale(.98); } to { opacity: 1; transform: none; } }
+.sys-icon { width: 52px; height: 52px; margin: 0 auto 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.sys-icon.error { background: #fee2e2; color: #dc2626; }
+.sys-icon.info { background: #dbeafe; color: #1d4ed8; }
+.sys-icon.confirm { background: #fef3c7; color: #d97706; }
+.sys-box h3 { margin: 0 0 8px; font-size: 17px; color: #1f2937; }
+.sys-box p { margin: 0 0 22px; font-size: 14px; color: #64748b; line-height: 1.5; white-space: pre-line; word-break: break-word; }
+.sys-actions { display: flex; gap: 10px; justify-content: center; }
+.sys-actions button { flex: 1; padding: 10px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; border: 1px solid #1f2937; background: #1f2937; color: #fff; }
+.sys-actions button:hover { opacity: .9; }
+.sys-actions button.sys-cancel { background: #fff; color: #475569; border-color: #cbd5e1; }
+.sys-actions button.sys-cancel:hover { background: #f1f5f9; }
+
+/* For Pick Up: keeps a horizontal-scroll fallback on desktop; the card layout
+   for tablets/phones now lives in admin_dashboard.css (.resp-table) */
+.table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.pickup-table .btn { white-space: nowrap; }

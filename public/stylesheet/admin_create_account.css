@@ -1,0 +1,81 @@
+.badge-pickup { background: #dbeafe; color: #1d4ed8; }
+
+/* Password show/hide toggle */
+.password-field-wrap {
+    position: relative;
+}
+
+.password-field-wrap input {
+    width: 100%;
+    padding-right: 38px;
+    box-sizing: border-box;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 4px;
+    line-height: 1;
+}
+
+.password-toggle-btn:hover {
+    color: var(--primary-light);
+}
+
+/* Remove the empty space on the left/right of the form panel
+   and the extra gap below it: the panel now fills the full
+   width of the main area. */
+.main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding-bottom: 16px;
+}
+
+.panel.form-grid {
+    flex: 1;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel.form-grid form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.panel.form-grid .form-submit-row {
+    margin-top: auto;
+    padding-top: 24px;
+    margin-bottom: 40px;
+}
+
+/* Make sure fields in a row split the width evenly and
+   line up flush with both edges of the form. */
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.form-row .form-group input,
+.form-row .form-group select {
+    width: 100%;
+    box-sizing: border-box;
+}

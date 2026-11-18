@@ -1,0 +1,330 @@
+/* ==========================================================
+   ADMIN LOGIN PAGE
+   Every rule is scoped with
+   :has(.left-panel) so it only applies on the login page and
+   can't affect dashboard buttons, inputs, or forms.
+   ========================================================== */
+
+body:has(.left-panel),
+html:has(.left-panel) {
+  min-height: 100vh;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+body:has(.left-panel) .container {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+}
+
+body:has(.left-panel) .left-panel {
+  flex: 1;
+  background: #2b1c10;
+  color: white;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+body:has(.left-panel) .back-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: .8;
+  transition: .3s;
+}
+
+body:has(.left-panel) .back-link:hover {
+  opacity: 1;
+}
+
+body:has(.left-panel) .logo-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: white;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+}
+
+body:has(.left-panel) .logo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body:has(.left-panel) .location {
+  font-size: 12px;
+  opacity: .85;
+}
+
+body:has(.left-panel) .tagline {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, .2);
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: .9;
+}
+
+body:has(.left-panel) .right-panel {
+  flex: 1;
+  background: white;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+body:has(.left-panel) .right-panel h3 {
+  text-align: center;
+  color: #1a1a1a;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+body:has(.left-panel) .sub-text {
+  text-align: center;
+  color: #6b5b4a;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+
+body:has(.left-panel) .form-group {
+  margin-bottom: 18px;
+}
+
+body:has(.left-panel) .form-group label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3b2b1c;
+}
+
+body:has(.left-panel) input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #c9bba5;
+  border-radius: 10px;
+  outline: none;
+  transition: .3s;
+  font-size: 14px;
+}
+
+body:has(.left-panel) input:focus {
+  border-color: #5a3e26;
+  box-shadow: 0 0 0 4px rgba(90, 62, 38, .12);
+}
+
+body:has(.left-panel) button {
+  width: 100%;
+  padding: 12px;
+  background: #2b1c10;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+
+body:has(.left-panel) button:hover {
+  background: #1a110a;
+}
+
+body:has(.left-panel) .password-wrap {
+  position: relative;
+}
+
+body:has(.left-panel) .password-wrap input {
+  padding-right: 44px;
+}
+
+body:has(.left-panel) .toggle-password {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6b5b4a;
+  width: 32px;
+  padding: 0;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+body:has(.left-panel) .toggle-password:hover {
+  background: none;
+  color: #2b1c10;
+}
+
+body:has(.left-panel) .field-error {
+  color: #3a3a3a;
+  font-size: 12px;
+  margin-top: 5px;
+  min-height: 14px;
+  display: none;
+}
+
+body:has(.left-panel) .field-error.show {
+  display: block;
+}
+
+body:has(.left-panel) input.invalid {
+  border-color: #3a3a3a;
+  box-shadow: 0 0 0 4px rgba(58, 58, 58, .1);
+}
+
+body:has(.left-panel) button[type="submit"]:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+}
+
+@media(max-width:700px) {
+body:has(.left-panel) .container {
+    flex-direction: column;
+}
+
+body:has(.left-panel) .left-panel {
+    padding: 50px 25px 25px;
+}
+
+body:has(.left-panel) .right-panel {
+    padding: 25px;
+}
+}
+
+body:has(.left-panel) input:-webkit-autofill,
+body:has(.left-panel) input:-webkit-autofill:hover,
+body:has(.left-panel) input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  -webkit-text-fill-color: #1a1a1a;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ---- Page-specific rules (layout, plus anything the block above does not set) ---- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body,
+html {
+  min-height: 100vh;
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.logo-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+
+.logo-text h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.error {
+  color: #dc2626;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+@media(max-width:700px) {
+
+  .container {
+    flex-direction: column;
+  }
+
+  .left-panel {
+    padding: 50px 25px 25px;
+  }
+
+  .right-panel {
+    padding: 25px;
+  }
+}
+
+/* ---- Responsive fixes ----
+   The shared stylesheet also pads <html> and <body> on this page, which
+   double-padded the screen and forced a pointless scrollbar. */
+html:has(.left-panel) {
+  display: block;
+  min-height: 0;
+  padding: 0;
+}
+
+body:has(.left-panel) {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 20px;
+}
+
+@media (max-width: 700px) {
+  body:has(.left-panel) {
+    padding: 12px;
+  }
+
+  body:has(.left-panel) .container {
+    max-width: 440px;
+  }
+
+  body:has(.left-panel) .left-panel {
+    padding: 56px 20px 24px;
+  }
+
+  body:has(.left-panel) .logo-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  body:has(.left-panel) .right-panel {
+    padding: 24px 20px 28px;
+  }
+
+  body:has(.left-panel) .right-panel h3 {
+    font-size: 21px;
+  }
+
+  body:has(.left-panel) .back-link {
+    padding: 6px;
+    top: 14px;
+    left: 14px;
+  }
+
+  /* 16px stops iOS Safari zooming in when a field is focused */
+  body:has(.left-panel) input {
+    font-size: 16px;
+  }
+}
