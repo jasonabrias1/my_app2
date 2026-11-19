@@ -95,15 +95,12 @@ function setNotifiedState(btn, sentAt) {
         return;
     }
 
-    var seconds = Math.ceil(remaining / 1000);
-    var minutes = Math.floor(seconds / 60);
-    var remainder = String(seconds % 60).padStart(2, '0');
     btn.disabled = true;
     btn.classList.add('notified');
-    btn.innerHTML = '<i class="fas fa-circle-check"></i> Remind in ' + minutes + ':' + remainder;
+    btn.innerHTML = '<i class="fas fa-circle-check"></i> Notified';
     window.setTimeout(function () {
         setNotifiedState(btn, sentAt);
-    }, Math.min(1000, remaining));
+    }, remaining);
 }
 var notifyButtons = document.querySelectorAll('.btn-notify');
 var notifiedRequests = getNotified();
