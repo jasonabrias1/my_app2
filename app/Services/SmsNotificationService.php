@@ -8,6 +8,19 @@ class SmsNotificationService
 {
     private const API_URL = 'https://www.iprogsms.com/api/v1/sms_messages';
 
+    /**
+     * Resolve the IPROG API token from config (works with config:cache),
+     * falling back to alternate config keys and the raw env value.
+     */
+    private function token(): string
+    {
+        $token = config('services.iprog_sms.token')
+            ?: config('services.iprog.token')
+            ?: env('IPROG_API_TOKEN');
+
+        return trim((string) $token, " \t\n\r\0\x0B\"'");
+    }
+
     /** @return array{success: bool, response: string} */
     public function send(string $number, string $message): array
     {
@@ -23,11 +36,22 @@ class SmsNotificationService
             return ['success' => false, 'response' => 'Invalid mobile number format.'];
         }
 
+        $token = $this->token();
+
+        if ($token === '') {
+            return [
+                'success' => false,
+                'response' => 'SMS token is not configured. Set IPROG_API_TOKEN and run php artisan config:clear.',
+            ];
+        }
+
         try {
             $response = Http::asForm()
-                ->timeout(15)
+                ->connectTimeout(5)
+                ->timeout(10)
+                ->retry(2, 300, throw: false)
                 ->post(self::API_URL, [
-                    'api_token' => config('services.iprog_sms.token'),
+                    'api_token' => $token,
                     'phone_number' => $number,
                     'message' => $message,
                 ]);
@@ -43,7 +67,7 @@ class SmsNotificationService
         }
 
         $failure = is_array($body) && isset($body['message'])
-            ? (string) $body['message']
+            ? (string) (is_array($body['message']) ? json_encode($body['message']) : $body['message'])
             : $response->body();
 
         return ['success' => false, 'response' => $failure];
@@ -52,8 +76,8 @@ class SmsNotificationService
     /** @return array{success: bool, response: string} */
     public function notifyRequestCompleted(string $requestorName, string $mobileNumber, string $documentType): array
     {
-        $message = "Hi {$requestorName}, your {$documentType} at E-Serbisyo Homestead is complete and ready for pick up. Please bring a valid ID.\n\n"
-            .'If someone else will claim it on your behalf, they must bring an authorization letter, a photocopy of your valid ID, and a photocopy of their valid ID.';
+        $message = "Hi {$requestorName}, your {$documentType} at E-Serbisyo Homestead is ready for pick up. "
+            .'Please bring a valid ID. If someone else will claim it, bring an authorization letter and a copy of both IDs.';
 
         return $this->send($mobileNumber, $message);
     }
