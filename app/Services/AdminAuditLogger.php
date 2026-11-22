@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,7 @@ class AdminAuditLogger
                 'role' => $role,
                 'action' => $action,
                 'details' => $details,
+                'created_at' => Carbon::now('UTC')->toDateTimeString(),
             ]);
 
             return true;

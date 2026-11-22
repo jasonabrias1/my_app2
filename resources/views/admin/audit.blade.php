@@ -44,7 +44,7 @@
                     </tr>
                     @foreach ($logs as $log)
                         <tr>
-                            <td data-label="Date/Time">{{ \Illuminate\Support\Carbon::parse($log->created_at)->format('Y-m-d H:i') }}</td>
+                            <td data-label="Date/Time">{{ \Illuminate\Support\Carbon::parse($log->created_at, 'UTC')->setTimezone('Asia/Manila')->format('Y-m-d H:i') }}</td>
                             <td data-label="User">{{ $log->user_name }}</td>
                             <td data-label="Role">{{ $log->role }}</td>
                             <td data-label="Action">{{ $log->action }}</td>

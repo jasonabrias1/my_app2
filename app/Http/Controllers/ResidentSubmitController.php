@@ -242,6 +242,7 @@ class ResidentSubmitController extends Controller
                 'action' => 'Submitted request',
                 'details' => 'REQ-' . str_pad((string) $requestId, 4, '0', STR_PAD_LEFT)
                     . ' (' . $validated['request_type'] . ')',
+                'created_at' => now('UTC')->toDateTimeString(),
             ]);
         } catch (QueryException $exception) {
             Log::warning('Resident audit log failed.', [

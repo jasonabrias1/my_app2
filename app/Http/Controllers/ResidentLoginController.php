@@ -100,6 +100,7 @@ class ResidentLoginController extends Controller
                 'role' => 'Resident',
                 'action' => $action,
                 'details' => $details,
+                'created_at' => now('UTC')->toDateTimeString(),
             ]);
         } catch (QueryException $exception) {
             Log::warning('Resident audit log failed.', [

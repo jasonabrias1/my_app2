@@ -142,6 +142,7 @@ class ResidentDashboardController extends Controller
                     'role' => 'Resident',
                     'action' => 'Logged out',
                     'details' => '',
+                    'created_at' => now('UTC')->toDateTimeString(),
                 ]);
             } catch (\Illuminate\Database\QueryException $exception) {
                 Log::warning('Resident audit log failed.', [

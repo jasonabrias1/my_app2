@@ -97,6 +97,7 @@ class ResidentRequestController extends Controller
                         'action' => 'Tracked request',
                         'details' => 'REQ-' . str_pad((string) $record->id, 4, '0', STR_PAD_LEFT)
                             . ' (' . $record->document_type . ')',
+                        'created_at' => now('UTC')->toDateTimeString(),
                     ]);
                 } catch (\Illuminate\Database\QueryException $exception) {
                     Log::warning('Resident audit log failed.', [
