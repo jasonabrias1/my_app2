@@ -211,6 +211,15 @@
             font-size: 13px;
         }
 
+        .nav-link.logout-link {
+            color: #fecaca;
+        }
+
+        .nav-link.logout-link:hover {
+            background: rgba(239, 68, 68, .18);
+            color: white;
+        }
+
         .logout-link {
             margin-top: auto;
         }
