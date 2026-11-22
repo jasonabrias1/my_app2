@@ -312,7 +312,8 @@
                             <div class="form-group">
                                 <label>Mobile Number <span class="req-mark">*</span></label>
                                 <input type="tel" name="mobile_number" placeholder="09xxxxxxxxx" pattern="09[0-9]{9}"
-                                    maxlength="11" inputmode="numeric" required>
+                                    maxlength="11" inputmode="numeric"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                                 <div class="required-note" style="text-align:left;">
                                     <span class="req-mark">Note:</span>
                                     <small>Kindly input your active/operational cellular number.</small>
@@ -369,7 +370,8 @@
                             <div class="form-group">
                                 <label>Your Mobile Number <span class="req-mark">*</span></label>
                                 <input type="tel" name="requestor_mobile_number" id="requestor_mobile_number"
-                                    placeholder="09xxxxxxxxx" pattern="09[0-9]{9}" maxlength="11" inputmode="numeric">
+                                    placeholder="09xxxxxxxxx" pattern="09[0-9]{9}" maxlength="11" inputmode="numeric"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             <div class="form-group">
                                 <label>Your Email Address <span class="opt">(optional)</span></label>

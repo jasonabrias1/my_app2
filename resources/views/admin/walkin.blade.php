@@ -185,7 +185,9 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Mobile Number <span class="opt">(optional)</span></label>
-                        <input type="tel" name="mobile_number" value="{{ $values['mobile_number'] }}" placeholder="09xxxxxxxxx" pattern="09[0-9]{9}">
+                        <input type="tel" name="mobile_number" value="{{ $values['mobile_number'] }}" placeholder="09xxxxxxxxx"
+                            pattern="09[0-9]{9}" maxlength="11" inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         <small style="color:var(--muted);font-size:11.5px;">Needed to send the SMS when the document is ready.</small>
                     </div>
                     <div class="form-group">
@@ -222,7 +224,9 @@
                         </div>
                         <div class="form-group">
                             <label>Mobile Number <span class="req-mark">*</span></label>
-                            <input type="tel" name="requestor_mobile_number" value="{{ $values['requestor_mobile_number'] }}" placeholder="09xxxxxxxxx" pattern="09[0-9]{9}">
+                            <input type="tel" name="requestor_mobile_number" value="{{ $values['requestor_mobile_number'] }}"
+                                placeholder="09xxxxxxxxx" pattern="09[0-9]{9}" maxlength="11" inputmode="numeric"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                         <div class="form-group">
                             <label>Email Address <span class="opt">(optional)</span></label>

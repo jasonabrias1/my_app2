@@ -195,7 +195,8 @@
                             <div class="form-group">
                                 <label for="new_mobile">New mobile number</label>
                                 <input type="tel" id="new_mobile" name="new_mobile" placeholder="09xxxxxxxxx"
-                                    pattern="09[0-9]{9}" maxlength="11" inputmode="numeric" required>
+                                    pattern="09[0-9]{9}" maxlength="11" inputmode="numeric"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                             </div>
                             <?php echo residentAccountPwField('current_password_mobile', 'current_password_mobile', 'Confirm your password', 'Enter your current password'); ?>
                             <p class="form-note small">We'll text a verification code to the number currently saved on your account.</p>

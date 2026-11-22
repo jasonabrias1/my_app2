@@ -94,7 +94,8 @@
                     <div class="form-group">
                         <label>Mobile Number <span class="req-mark">*</span></label>
                         <input type="tel" name="mobile_number" value="{{ old('mobile_number') }}"
-                            placeholder="09xxxxxxxxx" pattern="09[0-9]{9}" maxlength="11" inputmode="numeric" required>
+                            placeholder="09xxxxxxxxx" pattern="09[0-9]{9}" maxlength="11" inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                         <small style="color:var(--muted);font-size:11.5px;">Format: 09xxxxxxxxx</small>
                     </div>
                     <div class="form-group">
