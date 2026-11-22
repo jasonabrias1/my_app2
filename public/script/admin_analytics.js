@@ -5,7 +5,7 @@
 
     var MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    // 'YYYY-MM' -> 'Nov 2026', 'YYYY-MM-DD' -> 'Nov 13' (day view is within a single year/month filter)
+
     function formatLabel(raw) {
         var p = String(raw).split('-');
         var m = MONTH_NAMES[parseInt(p[1], 10) - 1] || raw;
@@ -23,7 +23,7 @@
         return document.getElementById(id);
     }
 
-    // Shows a message instead of an empty chart when the filter matches nothing
+
     function showEmpty(canvas, message) {
         var box = canvas.parentNode;
         canvas.style.display = 'none';

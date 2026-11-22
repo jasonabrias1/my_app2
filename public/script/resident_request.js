@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         copyButtons[j].addEventListener('click', copyTrackingCode);
     }
 
-    // Copy tracking code 
+
     function copyText(text) {
             var ta = document.createElement('textarea');
             ta.value = text;

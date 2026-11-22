@@ -1,6 +1,6 @@
 .badge-pickup { background: #dbeafe; color: #1d4ed8; }
 
-/* Password show/hide toggle */
+
 .password-field-wrap {
     position: relative;
 }
@@ -29,9 +29,7 @@
     color: var(--primary-light);
 }
 
-/* Remove the empty space on the left/right of the form panel
-   and the extra gap below it: the panel now fills the full
-   width of the main area. */
+
 .main {
     display: flex;
     flex-direction: column;
@@ -62,8 +60,7 @@
     margin-bottom: 40px;
 }
 
-/* Make sure fields in a row split the width evenly and
-   line up flush with both edges of the form. */
+
 .form-row {
     display: flex;
     gap: 16px;

@@ -26,13 +26,7 @@
             font-family: "Segoe UI", sans-serif;
         }
 
-        /* ---- Button reset ----
-           Without this, browsers apply their own native/default styling to
-           <button> elements — font size, padding, and a "pressed" look on
-           click/focus — which fights with .badge, .btn, etc.
-           and makes those buttons look like they shrink or change when
-           pressed. Resetting them here means every button strictly follows
-           our own classes instead. */
+
         button {
             font: inherit;
             color: inherit;
@@ -60,7 +54,7 @@
             display: flex;
         }
 
-        /* Sidebar */
+
         .sidebar {
             width: 250px;
             background: var(--primary);
@@ -221,7 +215,7 @@
             margin-top: auto;
         }
 
-        /* Main */
+
         .main {
             flex: 1;
             padding: 28px 34px;
@@ -267,7 +261,7 @@
             border: 1px solid #fecaca;
         }
 
-        /* Stat cards */
+
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -325,7 +319,7 @@
             color: var(--green);
         }
 
-        /* Card / panel */
+
         .panel {
             background: var(--card);
             border-radius: 14px;
@@ -449,7 +443,7 @@
             color: var(--primary);
         }
 
-        /* Request details modal */
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -613,7 +607,7 @@
             opacity: .4;
         }
 
-        /* Create account form */
+
         .form-grid {
             max-width: 860px;
             margin: 12px auto 0;
@@ -714,7 +708,7 @@
             padding-left: 18px;
         }
 
-        /* Analytics */
+
         .analytics-grid {
             display: grid;
             grid-template-columns: 1.3fr 1fr;
@@ -730,7 +724,7 @@
             height: 280px;
         }
 
-        /* Requests-by-type: chart on the left, exact-count list on the right */
+
         .doctype-breakdown {
             display: grid;
             grid-template-columns: 1.1fr 1fr;
@@ -821,13 +815,7 @@
             }
         }
 
-/* ==========================================================
-   RESPONSIVE / MOBILE LAYOUT
-   - Sidebar becomes a slide-in drawer opened from a top bar
-   - Tables turn into stacked cards on tablets and phones
-   - Forms, modals and cards resize to fit small screens
-   All mobile rules are screen-only so printing is unaffected.
-   ========================================================== */
+
 
 .main {
     min-width: 0;
@@ -877,7 +865,7 @@
     }
 }
 
-/* ---------- Tablet and below: drawer navigation ---------- */
+
 @media screen and (max-width: 1000px) {
     body:has(.sidebar) {
         flex-direction: column;
@@ -1006,7 +994,7 @@
         padding: 20px 20px 32px;
     }
 
-    /* Forms: two columns where they fit, wrapping instead of squeezing */
+
     .form-grid .form-row {
         flex-wrap: wrap;
     }
@@ -1016,9 +1004,7 @@
     }
 }
 
-/* ---------- Tables become stacked cards (tablet and phone) ----------
-   Add class="resp-table" to a <table>, class="pt-head" to its header row,
-   and data-label="Column name" to every <td>. */
+
 @media screen and (max-width: 1100px) {
 
     .resp-table,
@@ -1083,7 +1069,7 @@
     }
 }
 
-/* ---------- Phone ---------- */
+
 @media screen and (max-width: 700px) {
     .main {
         padding: 16px 14px 28px;
@@ -1117,7 +1103,7 @@
         font-size: 22px;
     }
 
-    /* an odd last card fills the row instead of leaving a gap */
+
     .stat-grid .stat-card:last-child:nth-child(odd) {
         grid-column: 1 / -1;
     }
@@ -1132,8 +1118,7 @@
         gap: 0;
     }
 
-    /* the cards already look like cards, so drop the white panel around them
-       (the panel title, if any, stays visible) */
+
     .panel:has(.resp-table) {
         background: transparent;
         border: none;
@@ -1163,7 +1148,7 @@
         min-height: 38px;
     }
 
-    /* 16px stops iOS Safari from zooming the page when a field is focused */
+
     input[type=text],
     input[type=email],
     input[type=tel],
@@ -1197,7 +1182,7 @@
     }
 }
 
-/* Small phones: card rows stack the label above the value */
+
 @media screen and (max-width: 480px) {
     .resp-table td {
         flex-direction: column;
@@ -1222,7 +1207,7 @@
     }
 }
 
-/* Modals become bottom sheets on phones */
+
 @media screen and (max-width: 600px) {
     .modal-overlay {
         align-items: flex-end;
@@ -1260,7 +1245,7 @@
     }
 }
 
-/* Keep mobile navigation controls hidden on desktop. */
+
 @media screen and (min-width: 1001px) {
     .mobile-topbar, .sidebar-overlay, .sidebar-close { display: none !important; }
 }

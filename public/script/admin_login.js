@@ -24,11 +24,11 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
 
-  // Show/hide password
+
   toggleBtn.addEventListener('click', function () {
     if (passwordInput.type === 'password') {
       passwordInput.type = 'text';
-      toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>'; // fixed typo: slah -> slash
+      toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
       toggleBtn.setAttribute('aria-label', 'Hide password');
     } else {
       passwordInput.type = 'password';
@@ -37,7 +37,7 @@
     }
   });
 
-  // Live-clear errors as the person types
+
   emailInput.addEventListener('input', function () {
     clearError(emailInput, emailError);
   });
@@ -45,7 +45,7 @@
     clearError(passwordInput, passwordError);
   });
 
-  // Client-side validation before the existing POST submit runs.
+
   form.addEventListener('submit', function (e) {
     var valid = true;
 
@@ -75,7 +75,7 @@
     submitLabel.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
   });
 
-  // Kapag bumalik gamit ang back button, ibalik ang button state
+
   window.addEventListener('pageshow', function () {
     submitBtn.disabled = false;
     submitLabel.textContent = 'Sign In';

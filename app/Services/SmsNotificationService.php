@@ -8,10 +8,7 @@ class SmsNotificationService
 {
     private const API_URL = 'https://www.iprogsms.com/api/v1/sms_messages';
 
-    /**
-     * Resolve the IPROG API token from config (works with config:cache),
-     * falling back to alternate config keys and the raw env value.
-     */
+
     private function token(): string
     {
         $token = config('services.iprog_sms.token')
@@ -21,7 +18,7 @@ class SmsNotificationService
         return trim((string) $token, " \t\n\r\0\x0B\"'");
     }
 
-    /** @return array{success: bool, response: string} */
+
     public function send(string $number, string $message): array
     {
         $number = preg_replace('/[^0-9]/', '', trim($number)) ?? '';
@@ -73,7 +70,7 @@ class SmsNotificationService
         return ['success' => false, 'response' => $failure];
     }
 
-    /** @return array{success: bool, response: string} */
+
     public function notifyRequestCompleted(string $requestorName, string $mobileNumber, string $documentType): array
     {
         $message = "Hi {$requestorName}, your {$documentType} at E-Serbisyo Homestead is ready for pick up. "

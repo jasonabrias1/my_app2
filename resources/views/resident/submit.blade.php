@@ -66,7 +66,7 @@
         </script>
     @endif
 
-    <!-- SIDEBAR -->
+
     <aside class="sidebar" id="sidebar">
 
         <div class="sidebar-brand">
@@ -128,7 +128,7 @@
 
     </aside>
 
-    <!-- MAIN CONTENT -->
+
     <main class="main-content">
 
         <div class="page-header">
@@ -138,9 +138,9 @@
 
         <div class="form-card">
 
-      
+
             <div class="stepper" id="stepper">
-       
+
             </div>
 
             <form action="{{ route('resident.submit.store') }}" method="POST" enctype="multipart/form-data" id="request-form"
@@ -171,7 +171,7 @@
                             </select>
                         </div>
 
-                        
+
                         <div class="type-extra" id="js_notice">
                             <div class="notice-box">
                                 <i class="ti ti-alert-triangle"></i>
@@ -186,7 +186,7 @@
                             </div>
                         </div>
 
-                        <!-- Extra: Business Clearance fields -->
+
                         <div class="type-extra" id="biz_fields">
                             <div class="form-row">
                                 <div class="form-group">
@@ -216,7 +216,7 @@
                         </div>
                     </section>
 
-                   
+
                     <section class="form-panel" data-step="relationship">
                         <div class="panel-head">
                             <div class="panel-head-icon"><i class="ti ti-users"></i></div>
@@ -239,7 +239,7 @@
                         </div>
                     </section>
 
-                  
+
                     <section class="form-panel" data-step="personal">
                         <div class="panel-head">
                             <div class="panel-head-icon"><i class="ti ti-id-badge-2"></i></div>
@@ -325,7 +325,7 @@
                         </div>
                     </section>
 
-                    
+
                     <section class="form-panel" data-step="requestor">
                         <div class="panel-head">
                             <div class="panel-head-icon"><i class="ti ti-user-check"></i></div>
@@ -402,7 +402,7 @@
                         </div>
                     </section>
 
-                   
+
                     <section class="form-panel" data-step="documents">
                         <div class="panel-head">
                             <div class="panel-head-icon"><i class="ti ti-clipboard-check"></i></div>
@@ -415,7 +415,7 @@
                         <div class="review-card">
                             <h3>Summary</h3>
                             <ul class="review-list" id="review-list">
-                              
+
                             </ul>
                         </div>
 
@@ -432,7 +432,7 @@
                             </div>
                         </div>
 
-                        <!-- First-Time Job Seeker requirements -->
+
                         <div class="type-extra" id="js_section">
                             <div class="docs-heading">First-Time Job Seeker Requirements</div>
                             <div class="form-group">
@@ -478,7 +478,7 @@
 
                 </div>
 
-                <!-- NAV -->
+
                 <div class="form-body" style="padding-top:0;">
                     <div class="step-actions" id="step-actions">
                         <button type="button" class="btn btn-ghost" id="btn-back">
@@ -500,7 +500,6 @@
     </main>
 
     <script>
-        // Resident's own saved account info
         window.RESIDENT_INFO = @json($residentInfo, JSON_HEX_TAG);
     </script>
     <script src="{{ asset('script/resident_submit.js') }}"></script>

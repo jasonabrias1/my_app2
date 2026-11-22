@@ -1,15 +1,15 @@
-// Opens the certificate only.
+
 function printCertificate(id) {
     window.open(window.ADMIN_SUMMARY_URL + '?id=' + id, '_blank');
 }
 
-// For Pick Up tab
+
 function changeRequestStatus(selectEl, code) {
     if (selectEl.value == 'For Pick Up') return;
     var label = selectEl.options[selectEl.selectedIndex].text;
     showConfirm(
         'Move ' + code + ' to "' + label + '"?',
-        function () { selectEl.form.submit(); }, // don't disable the select: disabled fields aren't submitted
+        function () { selectEl.form.submit(); },
         function () { selectEl.value = 'For Pick Up'; },
         'Yes, move it'
     );
@@ -23,7 +23,7 @@ function closeSysDialog() {
     document.getElementById('sysDialog').classList.remove('open');
 }
 
-// Creates one button of the dialog
+
 function addDialogButton(actions, b) {
     var btn = document.createElement('button');
     btn.type = 'button';
@@ -61,7 +61,7 @@ function showConfirm(message, onYes, onNo, yesText) {
     ]);
 }
 
-// Sends an SMS to the resident on demand
+
 var NOTIFIED_KEY = 'notificationCooldowns';
 var NOTIFY_COOLDOWN_MS = 5 * 60 * 1000;
 function getNotified() {

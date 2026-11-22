@@ -1,9 +1,4 @@
-/* ==========================================================
-   ADMIN LOGIN PAGE
-   Every rule is scoped with
-   :has(.left-panel) so it only applies on the login page and
-   can't affect dashboard buttons, inputs, or forms.
-   ========================================================== */
+
 
 body:has(.left-panel),
 html:has(.left-panel) {
@@ -222,7 +217,7 @@ body:has(.left-panel) input:-webkit-autofill:focus {
   transition: background-color 9999s ease-in-out 0s;
 }
 
-/* ---- Page-specific rules (layout, plus anything the block above does not set) ---- */
+
 * {
   margin: 0;
   padding: 0;
@@ -276,9 +271,7 @@ html {
   }
 }
 
-/* ---- Responsive fixes ----
-   The shared stylesheet also pads <html> and <body> on this page, which
-   double-padded the screen and forced a pointless scrollbar. */
+
 html:has(.left-panel) {
   display: block;
   min-height: 0;
@@ -323,7 +316,7 @@ body:has(.left-panel) {
     left: 14px;
   }
 
-  /* 16px stops iOS Safari zooming in when a field is focused */
+
   body:has(.left-panel) input {
     font-size: 16px;
   }

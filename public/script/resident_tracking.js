@@ -3,7 +3,7 @@
     var STATUS_BADGE_CLASS = CFG.badgeMap || {};
     var STATUS_LABELS = CFG.statusLabels || {};
 
-    
+
 
         function formatDetailDate(value) {
             if (!value) return value;
@@ -269,7 +269,7 @@
             if (e.key === 'Escape') closeDetailsModal();
         });
 
-    // TRACKING FORM VALIDATION
+
     function setupTrackingForm() {
         var form = document.getElementById('tracking-form');
         var input = document.getElementById('tracking-input');
@@ -297,7 +297,7 @@
         submitLabel.textContent = 'Searching...';
     });
 
-    // Restore the button if the page is shown again via the Back button
+
     window.addEventListener('pageshow', function () {
         submitBtn.disabled = false;
         submitLabel.textContent = 'Track';

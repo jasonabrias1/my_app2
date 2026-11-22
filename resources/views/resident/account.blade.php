@@ -29,7 +29,7 @@
     }
     ?>
 
-    <!-- SIDEBAR -->
+
     <aside class="sidebar">
         <div class="sidebar-brand">
             <div class="brand-icon"><img src="{{ asset('logo/HomesteadLogo.jpg') }}" alt="Barangay Logo" /></div>
@@ -63,7 +63,7 @@
         </div>
     </aside>
 
-    <!-- MAIN -->
+
     <main class="main-content">
         <div class="page-wrap">
 
@@ -72,7 +72,7 @@
                 <p>Choose what you want to update. We'll ask for your password to keep your account safe.</p>
             </div>
 
-            <!-- Profile summary -->
+
             <section class="profile-card">
                 <div class="profile-avatar"><?php echo $initials; ?></div>
                 <div class="profile-info">
@@ -84,7 +84,7 @@
                 </div>
             </section>
 
-            <!-- Tabs -->
+
             <div class="tabs" role="tablist" aria-label="Account settings">
                 <button type="button" class="tab" role="tab" data-tab="email" aria-selected="<?php echo $emailTabSelected; ?>">
                     <i class="ti ti-mail"></i> Email
@@ -97,7 +97,7 @@
                 </button>
             </div>
 
-            <!-- ══════════ EMAIL ══════════ -->
+
             <section class="tab-panel <?php echo $emailTabClass; ?>" id="panel-email" role="tabpanel">
                 <div class="status-card account-card">
                     <div class="account-card-header">
@@ -127,7 +127,7 @@
                 </div>
             </section>
 
-            <!-- ══════════ MOBILE ══════════ -->
+
             <section class="tab-panel <?php echo $mobileTabClass; ?>" id="panel-mobile" role="tabpanel">
                 <div class="status-card account-card">
                     <div class="account-card-header">
@@ -206,7 +206,7 @@
                 </div>
             </section>
 
-            <!-- ══════════ PASSWORD ══════════ -->
+
             <section class="tab-panel <?php echo $passwordTabClass; ?>" id="panel-password" role="tabpanel">
                 <div class="status-card account-card">
                     <div class="account-card-header">

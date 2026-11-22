@@ -1,4 +1,4 @@
-// Two-step "account created" confirmation:
+
 function openCreateAccountModal(name) {
     document.getElementById('createdResidentName').textContent = name;
     document.getElementById('createStepSuccess').style.display = 'block';
@@ -21,7 +21,7 @@ function resetCreateAccountForm() {
     window.location.href = window.ADMIN_ACCOUNTS_URL;
 }
 
-// Password show/hide toggle
+
 function togglePasswordVisibility(inputId, btn) {
     var input = document.getElementById(inputId);
     var icon = btn.querySelector('i');
@@ -38,7 +38,7 @@ function togglePasswordVisibility(inputId, btn) {
     }
 }
 
-// Open the "account created" popup after a successful save
+
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof CREATED_RESIDENT_NAME !== 'undefined') {
         openCreateAccountModal(CREATED_RESIDENT_NAME);

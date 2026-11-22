@@ -99,8 +99,8 @@ function addResidentSection(body, title, icon, rows) {
     body.appendChild(section);
 }
 
-// Fields already shown in the sections above or in the header,
-// so they are not repeated under "Additional Information".
+
+
 var RESIDENT_HANDLED_KEYS = [
     'id', 'password', 'status', 'fullname',
     'first_name', 'middle_name', 'last_name', 'suffix', 'suffix_name',

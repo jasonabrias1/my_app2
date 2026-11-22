@@ -2,7 +2,7 @@
 .btn-print-summary:hover { background: #245c3d; }
 .btn-print-summary:disabled { opacity: 0.6; cursor: default; }
 
-/* Clickable boxes (one per document type) */
+
 .sum-cards { display: grid; grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
 .sum-card { position: relative; min-width: 0; text-align: left; font-family: inherit; cursor: pointer; background: #fff; border: 1px solid transparent; border-radius: 12px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(15, 23, 42, .08); transition: border-color .15s, background .15s, transform .15s; }
 .sum-card:hover { transform: translateY(-2px); }
@@ -13,11 +13,11 @@
 .sum-desc { font-size: 11px; color: #64748b; }
 .sum-hint { text-align: center; color: #94a3b8; font-size: 13px; margin: 8px 0 0; }
 
-/* Tablet: fewer boxes per row so they never get squeezed */
+
 @media screen and (max-width: 1100px) { .sum-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media screen and (max-width: 700px) { .sum-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
-/* The requests list stays a real table (it is a printable report); wide content scrolls sideways */
+
 #listWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
 @media screen and (max-width: 700px) {
@@ -30,9 +30,7 @@
 }
 
 @media print {
-    /* Paper size is chosen in the browser's print dialog.
-       Margin 0 removes the browser's header/footer (date, page title, URL);
-       the spacing is added back as padding on the content instead. */
+
     @page { margin: 0; }
 
     .sum-cards, .sum-hint { display: none !important; }

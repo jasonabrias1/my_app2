@@ -135,7 +135,7 @@
                     </div>
                 <?php endif; ?>
 
-                <!-- REQUESTOR DETAILS -->
+
                 <div class="detail-section">
                     <div class="detail-section-title"><i class="ti ti-user"></i> Requestor Information</div>
                     <div class="detail-grid">
@@ -166,7 +166,7 @@
                     </div>
                 </div>
 
-                <!-- LOCATION DETAILS -->
+
                 <div class="detail-section">
                     <div class="detail-section-title"><i class="ti ti-map-pin"></i> Purok</div>
                     <div class="detail-grid">
@@ -177,7 +177,7 @@
                     </div>
                 </div>
 
-                <!-- CONTACT DETAILS -->
+
                 <div class="detail-section">
                     <div class="detail-section-title"><i class="ti ti-phone"></i> Contact Information</div>
                     <div class="detail-grid">
@@ -193,7 +193,7 @@
                 </div>
 
                 <?php if (isOnBehalf($record)): ?>
-                    <!-- "YOUR INFORMATION" SUMMARY (requestor, when filed on behalf of the resident) -->
+
                     <div class="detail-section">
                         <div class="detail-section-title"><i class="ti ti-user-check"></i> Your Information</div>
                         <div class="detail-grid">
@@ -244,7 +244,7 @@
                     </div>
                 <?php endif; ?>
 
-                <!-- REQUEST DETAILS -->
+
                 <div class="detail-section">
                     <div class="detail-section-title"><i class="ti ti-file-text"></i> Request Information</div>
                     <div class="detail-grid">
@@ -300,7 +300,7 @@
 
     </main>
 
-    <!-- REQUEST DETAILS MODAL -->
+
     <div class="modal-overlay" id="detailsModal" style="display:none;" onclick="closeDetailsModalOnOverlay(event)">
         <div class="modal-box">
             <div class="modal-header">

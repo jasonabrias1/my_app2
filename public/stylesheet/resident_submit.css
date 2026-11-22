@@ -11,7 +11,7 @@
     --green-bg: #dcfce7;
     --red: #dc2626;
 
-    /* Brown theme for native browser controls (checkboxes, radios, etc.) */
+
     accent-color: var(--primary-light);
     color-scheme: light;
 }
@@ -24,7 +24,7 @@
     -webkit-tap-highlight-color: rgba(90, 62, 38, .15);
 }
 
-/* Replace default blue text selection with brown */
+
 ::selection {
     background: #e6d5c3;
     color: var(--primary);
@@ -57,7 +57,7 @@ body {
     display: flex;
 }
 
-/* SIDEBAR — solid primary color, same rhythm as resident_dashboard.css */
+
 .sidebar {
     width: 250px;
     min-height: 100vh;
@@ -201,7 +201,7 @@ body {
     color: white;
 }
 
-/* MAIN */
+
 .main-content {
     margin-left: 250px;
     width: 100%;
@@ -219,7 +219,7 @@ body {
     color: var(--muted);
 }
 
-/* FORM CARD */
+
 
 
 .form-card {
@@ -232,7 +232,7 @@ body {
     overflow: hidden;
 }
 
-/* ---- Stepper ---- */
+
 .stepper {
     display: flex;
     align-items: flex-start;
@@ -303,7 +303,7 @@ body {
     color: var(--text);
 }
 
-/* ---- Panels ---- */
+
 .form-body {
     padding: 28px;
 }
@@ -414,9 +414,7 @@ body {
     resize: vertical;
 }
 
-/* Document dropdown: highlighted / selected option in brown (not blue).
-   Works on Chrome/Edge/Firefox desktop. iOS/Android/macOS draw the list
-   natively and ignore this. */
+
 .form-group select option {
     background-color: #fff;
     color: var(--text);
@@ -472,7 +470,7 @@ body {
     height: 100%;
 }
 
-/* Info banner when requesting for someone else */
+
 .info-banner {
     display: flex;
     gap: 10px;
@@ -492,7 +490,7 @@ body {
     color: var(--primary-light);
 }
 
-/* File upload */
+
 .upload-box {
     border: 1.5px dashed #d6c7b8;
     border-radius: 12px;
@@ -517,7 +515,7 @@ body {
     cursor: pointer;
 }
 
-/* Brown "Choose file" button for any visible file input */
+
 input[type=file]::file-selector-button {
     background: var(--primary-light);
     color: #fff;
@@ -584,7 +582,7 @@ input[type=file]::file-selector-button:hover {
     margin-bottom: 24px;
 }
 
-/* Review summary */
+
 .review-card {
     background: #fff;
     border: 1px solid var(--border);
@@ -628,7 +626,7 @@ input[type=file]::file-selector-button:hover {
     text-align: right;
 }
 
-/* Nav buttons */
+
 .step-actions {
     display: flex;
     justify-content: space-between;
@@ -694,7 +692,7 @@ input[type=file]::file-selector-button:hover {
     background: rgba(255, 255, 255, .22);
 }
 
-/* Required-field note at the bottom of the form */
+
 .required-note {
     font-size: 12px;
     color: var(--muted);
@@ -706,7 +704,7 @@ input[type=file]::file-selector-button:hover {
     font-weight: 700;
 }
 
-/* Lock fields already saved on the resident's account. */
+
 .field-locked {
     background: #f3f4f6 !important;
     color: #4b5563;
@@ -717,13 +715,13 @@ select.field-locked {
     pointer-events: none;
 }
 
-/* On the last step, Back + Submit sit together at the bottom right. */
+
 .step-actions.is-last {
     justify-content: flex-end !important;
     gap: 12px;
 }
 
-/* First-Time Job Seeker / Business Clearance extras */
+
 .type-extra {
     display: none;
     margin-top: 4px;

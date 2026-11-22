@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{{ asset('stylesheet/admin_dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('stylesheet/admin_create_account.css') }}">
     <style>
-        /* Hide the browser's built-in password reveal icon (Edge) so only the custom eye button shows */
         input[type="password"]::-ms-reveal,
         input[type="password"]::-ms-clear {
             display: none;

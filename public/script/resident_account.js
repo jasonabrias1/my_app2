@@ -1,14 +1,14 @@
-    // Mobile menu
+
     function initMobileMenu() {
-        var toggle = document.getElementById('menu-toggle'); 
-        var nav = document.getElementById('nav-section'); 
+        var toggle = document.getElementById('menu-toggle');
+        var nav = document.getElementById('nav-section');
         if (toggle && nav) {
             toggle.addEventListener('click', function () {
                 nav.classList.toggle('open');
             });
         }
     }
-    //Tabs
+
     function selectTab() {
         var key = this.getAttribute('data-tab');
         var tabs = document.querySelectorAll('.tab');
@@ -36,17 +36,17 @@
         }
     }
 
-    //  Password strength
+
     var STRENGTH_LABELS = ['', 'Weak', 'Fair', 'Good', 'Strong'];
 
         function getLevel(v) {
             if (!v) return 0;
-            if (v.length < 8) return 1;                         // too short is always Weak
+            if (v.length < 8) return 1;
 
-            var score = 1;                                      // 8+ characters
-            if (/[a-z]/.test(v) && /[A-Z]/.test(v)) score++;    // upper + lower case
-            if (/\d/.test(v)) score++;                          // number
-            if (/[^A-Za-z0-9]/.test(v)) score++;                // symbol
+            var score = 1;
+            if (/[a-z]/.test(v) && /[A-Z]/.test(v)) score++;
+            if (/\d/.test(v)) score++;
+            if (/[^A-Za-z0-9]/.test(v)) score++;
             return score;
         }
 
@@ -100,7 +100,7 @@
     showStrength();
 }
 
-//  Clear autofilled 
+
 function clearPasswords() {
     var inputs = document.querySelectorAll('.pw-wrap input');
     for (var i = 0; i < inputs.length; i++) {
@@ -136,7 +136,7 @@ function initEyeButtons() {
     }
 }
 
-    // Resend-code countdown 
+
     function initResendCountdown() {
         var btn = document.getElementById('resend-btn');
         var label = document.getElementById('resend-label');

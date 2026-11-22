@@ -93,7 +93,7 @@
             return ext == 'jpg' || ext == 'jpeg' || ext == 'png' ||ext == 'gif' || ext == 'webp';
         }
 
-        
+
         function addOneAttachment(section, it) {
                 var src = UPLOADS_BASE + encodeURIComponent(it.file);
 
@@ -122,7 +122,7 @@
                     wrap.appendChild(img);
                     section.appendChild(wrap);
                 } else {
-                    // PDFs can't be shown as an image
+
                     var link = document.createElement('a');
                     link.href = src;
                     link.target = '_blank';
@@ -163,7 +163,7 @@ function addAttachmentSection(body, data) {
         addOneAttachment(section, items[j]);
     }
         body.appendChild(section);
-        
+
 }
     function openDetailsModal (data) {
         var modal = document.getElementById('detailsModal');
@@ -206,7 +206,7 @@ function addAttachmentSection(body, data) {
                 { key: 'email_address', label: 'Email Address', value: data.email_address }
             ]));
 
-            // "Your Information": only when the request was filed on behalf of someone else
+
             if (isOnBehalf(data)) {
                 addDetailSection(body, 'Your Information', 'ti-user-check', [
                     { key: 'requestor_full_name', label: 'Requested By', value: buildRequestorFullName(data), fullWidth: true },
@@ -239,7 +239,7 @@ function addAttachmentSection(body, data) {
             modal.style.display = 'flex';
         }
 
-        
+
 function closeDetailsModal() {
     var modal = document.getElementById('detailsModal');
     modal.classList.remove('open');
@@ -273,7 +273,7 @@ function setupDetailsModal(rowClass) {
     });
 }
 
-// Mobile sidebar
+
 function setupMobileSidebar() {
     var menuToggle = document.getElementById('menu-toggle');
     var navSection = document.getElementById('nav-section');
@@ -284,7 +284,7 @@ function setupMobileSidebar() {
     }
 }
 
-// DISMISS THE "READY FOR PICKUP" TOAST
+
 function setupReadyToast() {
     var toast = document.getElementById('ready-toast');
     var closeBtn = document.getElementById('ready-toast-close');
@@ -320,7 +320,7 @@ function setupReadyToast() {
 document.addEventListener('DOMContentLoaded', function () {
     setupMobileSidebar();
     setupReadyToast();
-    // The dashboard's rows are .status-row (the tracking page uses .pick-row)
+
     setupDetailsModal('.status-row');
 });
 

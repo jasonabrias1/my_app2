@@ -4,7 +4,7 @@ var PERSONAL_FIELDS = [
 ];
     document.addEventListener('DOMContentLoaded', function () {
 
-    // Collapsible sidebar menu on small screens 
+
     var toggle = document.getElementById('menu-toggle');
     var nav = document.getElementById('nav-section');
     if (toggle && nav) {
@@ -13,7 +13,7 @@ var PERSONAL_FIELDS = [
         });
     }
 
-    //  Request form 
+
     var form = document.getElementById('request-form');
     var relationshipSelect = document.getElementById('relationship_to_resident');
     if (form && relationshipSelect) {
@@ -33,7 +33,7 @@ function setupRequestForm(form, relationshipSelect) {
             { key: 'documents', label: 'Documents' }
         ];
 
-        var MAX_FILE_BYTES = 5 * 1024 * 1024; // matches the "up to 5MB" hint and the server check
+        var MAX_FILE_BYTES = 5 * 1024 * 1024;
         var ALLOWED_EXT = ['jpg', 'jpeg', 'png', 'pdf'];
 
         var requestorRequiredFields = [
@@ -189,12 +189,10 @@ function setupRequestForm(form, relationshipSelect) {
         }
         if (validIdField) validIdField.required = (self && !isJS);
 
-            // Job Seeker extras
             showOrHide('js_notice', isJS, 'block');
             showOrHide('js_section', isJS, 'block');
             setRequired(['js_id_type', 'js_identity', 'data_privacy'], isJS);
 
-            // Business Clearance extras
             showOrHide('biz_fields', isBiz, 'block');
             setRequired(['business_name', 'business_nature', 'business_address'], isBiz);
         }
@@ -377,7 +375,6 @@ function setupRequestForm(form, relationshipSelect) {
             list.innerHTML = html;
         }
 
-        //buttons and form events
 
         document.getElementById('btn-next').addEventListener('click', function () {
             if (!validateCurrentStep()) return;

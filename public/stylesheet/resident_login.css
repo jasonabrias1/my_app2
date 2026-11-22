@@ -22,7 +22,7 @@ body {
   padding: 20px;
 }
 
-/* ---------- Card ---------- */
+
 .container {
   width: 100%;
   max-width: 700px;
@@ -33,7 +33,7 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
 }
 
-/* ---------- Left panel ---------- */
+
 .left-panel {
   flex: 1;
   background: #2b1c10;
@@ -109,7 +109,7 @@ body {
   opacity: .9;
 }
 
-/* ---------- Right panel ---------- */
+
 .right-panel {
   flex: 1;
   background: white;
@@ -133,7 +133,7 @@ body {
   margin-bottom: 25px;
 }
 
-/* ---------- Form ---------- */
+
 .form-group {
   margin-bottom: 18px;
 }
@@ -183,7 +183,7 @@ button[type="submit"]:disabled {
   cursor: not-allowed;
 }
 
-/* ---------- Password show/hide ---------- */
+
 .password-wrap {
   position: relative;
 }
@@ -211,7 +211,7 @@ button[type="submit"]:disabled {
   color: #2b1c10;
 }
 
-/* ---------- Validation / errors ---------- */
+
 .field-error {
   color: red;
   font-size: 12px;
@@ -238,7 +238,7 @@ input.invalid {
   font-size: 13px;
 }
 
-/* ---------- Browser autofill ---------- */
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
@@ -247,7 +247,7 @@ input:-webkit-autofill:focus {
   transition: background-color 9999s ease-in-out 0s;
 }
 
-/* ---------- Mobile ---------- */
+
 @media (max-width: 700px) {
 
   body {
