@@ -103,7 +103,7 @@
                                 <?php echo htmlspecialchars($row['purpose'] ?? ''); ?>
                             </div>
 
-                            <?php if ($rawCode !== ''): ?>
+                            <?php if ($rawCode !== '' && $filter !== 'Completed'): ?>
                                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
                                     <a class="track-link"
                                         href="{{ route('resident.tracking') }}?auto_track=1&tracking_no=<?php echo urlencode($rawCode); ?>">
@@ -118,11 +118,13 @@
                             <?php endif; ?>
                         </div>
 
-                        <div class="status-side">
-                            <span class="badge <?php echo $badgeMap[$row['status']] ?? 'badge-pending'; ?>">
-                                <?php echo htmlspecialchars($label); ?>
-                            </span>
-                        </div>
+                        <?php if ($filter !== ''): ?>
+                            <div class="status-side">
+                                <span class="badge <?php echo $badgeMap[$row['status']] ?? 'badge-pending'; ?>">
+                                    <?php echo htmlspecialchars($label); ?>
+                                </span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>

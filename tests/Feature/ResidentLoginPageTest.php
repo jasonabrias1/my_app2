@@ -367,6 +367,9 @@ class ResidentLoginPageTest extends TestCase
                 ->assertOk()
                 ->assertSee('My Requests')
                 ->assertSee('Certificate of Residency')
+                ->assertDontSee('badge badge-pending', false)
+                ->assertSee('Track this request')
+                ->assertSee('copy-btn', false)
                 ->assertSee('resident_request.js');
 
             $this->withSession([
@@ -408,6 +411,20 @@ class ResidentLoginPageTest extends TestCase
                 ->assertSee('data-request-id="1"', false)
                 ->assertSee('data-dismissal-scope=', false)
                 ->assertHeader('Cache-Control', 'no-store, private, max-age=0');
+
+            DB::table('document_requests')
+                ->where('tracking_code', 'BR-2026-ABC123')
+                ->update(['status' => 'Released']);
+
+            $this->withSession([
+                'resident_id' => 1,
+                'resident_name' => 'Resident Tester',
+            ])->get('/resident/requests?status=Completed')
+                ->assertOk()
+                ->assertSee('Certificate of Residency')
+                ->assertSee('Completed')
+                ->assertDontSee('Track this request')
+                ->assertDontSee('copy-btn', false);
 
             $this->withSession([
                 'resident_id' => 1,
