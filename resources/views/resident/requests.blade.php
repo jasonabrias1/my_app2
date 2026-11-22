@@ -86,7 +86,6 @@
                 foreach ($requests as $row):
                     $rowIndex++;
                     $rawCode = trim($row['tracking_code'] ?? '');
-                    $label = $statusLabels[$row['status']] ?? $row['status'];
                     ?>
                     <div class="status-row" style="animation-delay: <?php echo min($rowIndex * 0.05, 0.4); ?>s;">
                         <div class="doc-icon"><i class="ti ti-file-text"></i></div>
@@ -117,14 +116,6 @@
                                 </div>
                             <?php endif; ?>
                         </div>
-
-                        <?php if ($filter !== ''): ?>
-                            <div class="status-side">
-                                <span class="badge <?php echo $badgeMap[$row['status']] ?? 'badge-pending'; ?>">
-                                    <?php echo htmlspecialchars($label); ?>
-                                </span>
-                            </div>
-                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>

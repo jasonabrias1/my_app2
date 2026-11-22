@@ -368,6 +368,7 @@ class ResidentLoginPageTest extends TestCase
                 ->assertSee('My Requests')
                 ->assertSee('Certificate of Residency')
                 ->assertDontSee('badge badge-pending', false)
+                ->assertDontSee('status-side', false)
                 ->assertSee('Track this request')
                 ->assertSee('copy-btn', false)
                 ->assertSee('resident_request.js');
@@ -423,6 +424,7 @@ class ResidentLoginPageTest extends TestCase
                 ->assertOk()
                 ->assertSee('Certificate of Residency')
                 ->assertSee('Completed')
+                ->assertDontSee('status-side', false)
                 ->assertDontSee('Track this request')
                 ->assertDontSee('copy-btn', false);
 

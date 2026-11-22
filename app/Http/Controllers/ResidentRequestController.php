@@ -34,16 +34,6 @@ class ResidentRequestController extends Controller
         }
 
         $requests = $query->orderByDesc('request_date')->get()->map(fn ($row) => (array) $row);
-        $statusLabels = [
-            'Pending' => 'Pending',
-            'For Pick Up' => 'For Pick Up',
-            'Released' => 'Completed',
-        ];
-        $badgeMap = [
-            'Pending' => 'badge-pending',
-            'For Pick Up' => 'badge-processing',
-            'Released' => 'badge-completed',
-        ];
         $userName = $request->session()->get('resident_name', 'Resident');
         $uploadPath = url('/resident/dashboard/attachments') . '/';
         $initials = collect(preg_split('/\s+/', trim($userName)) ?: [])
@@ -56,8 +46,6 @@ class ResidentRequestController extends Controller
             'statusGroups',
             'filter',
             'requests',
-            'statusLabels',
-            'badgeMap',
             'userName',
             'initials',
             'uploadPath',
