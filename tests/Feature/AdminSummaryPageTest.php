@@ -151,6 +151,24 @@ class AdminSummaryPageTest extends TestCase
             ->assertSee('BR-0010')
             ->assertDontSee('Issued on:')
             ->assertSee('Yes, mark For Pick Up');
+
+        $this->insertRequest([
+            'id' => 11,
+            'resident_id' => 1,
+            'document_type' => 'Certificate of Residency',
+            'status' => 'Pending',
+            'tracking_code' => 'WI-2026-ABC123',
+            'first_name' => 'Walk',
+            'last_name' => 'In',
+            'purpose' => 'Walk-in service',
+        ]);
+
+        $this->withSession(['admin_id' => 7, 'admin_name' => 'Summary Admin'])
+            ->get('/admin/summary?id=11')
+            ->assertOk()
+            ->assertSee('Confirming will move this request to Completed.')
+            ->assertSee('Yes, mark Completed')
+            ->assertSee(route('admin.dashboard', ['view' => 'completed']), false);
     }
 
     public function test_confirming_a_print_updates_only_requests_not_already_ready_or_released(): void
@@ -158,15 +176,26 @@ class AdminSummaryPageTest extends TestCase
         $this->insertRequest(['id' => 1, 'document_type' => 'Certificate', 'status' => 'Pending']);
         $this->insertRequest(['id' => 2, 'document_type' => 'Certificate', 'status' => 'For Pick Up']);
         $this->insertRequest(['id' => 3, 'document_type' => 'Certificate', 'status' => 'Released']);
+        $this->insertRequest([
+            'id' => 4,
+            'document_type' => 'Certificate',
+            'status' => 'Pending',
+            'tracking_code' => 'WI-2026-ABC123',
+        ]);
 
         $this->withSession(['admin_id' => 7, 'admin_name' => 'Summary Admin'])
             ->post('/admin/summary/printed', ['id' => 1, 'action' => 'mark_printed'])
+            ->assertOk()
+            ->assertExactJson(['ok' => true]);
+        $this->withSession(['admin_id' => 7, 'admin_name' => 'Summary Admin'])
+            ->post('/admin/summary/printed', ['id' => 4, 'action' => 'mark_printed'])
             ->assertOk()
             ->assertExactJson(['ok' => true]);
 
         $this->assertSame('For Pick Up', DB::table('document_requests')->where('id', 1)->value('status'));
         $this->assertSame('For Pick Up', DB::table('document_requests')->where('id', 2)->value('status'));
         $this->assertSame('Released', DB::table('document_requests')->where('id', 3)->value('status'));
+        $this->assertSame('Released', DB::table('document_requests')->where('id', 4)->value('status'));
 
         $this->withSession(['admin_id' => 7])
             ->post('/admin/summary/printed', ['id' => 'not-an-id', 'action' => 'mark_printed'])

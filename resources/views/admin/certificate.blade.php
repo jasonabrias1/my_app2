@@ -53,11 +53,11 @@
             <div class="print-confirm">
                 <div>
                     <p class="pc-title" id="pcTitle">Did the certificate print successfully?</p>
-                    <p class="pc-sub" id="pcSub">Confirming will move this request to For Pick Up.</p>
+                    <p class="pc-sub" id="pcSub">Confirming will move this request to {{ $isWalkIn ? 'Completed' : 'For Pick Up' }}.</p>
                 </div>
                 <div class="pc-actions" id="pcAsk">
                     <button type="button" class="no" id="btnNotYet">Not yet</button>
-                    <button type="button" id="btnPrinted">Yes, mark For Pick Up</button>
+                    <button type="button" id="btnPrinted">Yes, mark {{ $isWalkIn ? 'Completed' : 'For Pick Up' }}</button>
                 </div>
                 <div class="pc-actions" id="pcLater" style="display:none;">
                     <button type="button" class="no" id="btnCloseConfirm">Close</button>
@@ -233,7 +233,7 @@
 
             function pcShowAsk() {
                 document.getElementById('pcTitle').textContent = 'Did the certificate print successfully?';
-                document.getElementById('pcSub').textContent = 'Confirming will move this request to For Pick Up.';
+                document.getElementById('pcSub').textContent = 'Confirming will move this request to {{ $isWalkIn ? 'Completed' : 'For Pick Up' }}.';
                 pcAskRow.style.display = '';
                 pcLaterRow.style.display = 'none';
             }
@@ -292,7 +292,7 @@
                         .catch(function () {
                             pcShowNotice('Could not update the status. Please try again.');
                             button.disabled = false;
-                            button.textContent = 'Yes, mark For Pick Up';
+                            button.textContent = 'Yes, mark {{ $isWalkIn ? 'Completed' : 'For Pick Up' }}';
                         });
                 });
             }

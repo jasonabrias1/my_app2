@@ -92,10 +92,23 @@ class AdminSummaryController extends Controller
             return response()->json(['ok' => false], 422);
         }
 
-        $changed = DB::table('document_requests')
+        $requestRecord = DB::table('document_requests')
             ->where('id', $requestId)
-            ->whereNotIn('status', ['For Pick Up', 'Released'])
-            ->update(['status' => 'For Pick Up']);
+            ->first(['status', 'tracking_code']);
+        $isWalkIn = $requestRecord
+            && str_starts_with((string) $requestRecord->tracking_code, 'WI-');
+
+        if ($isWalkIn) {
+            $changed = DB::table('document_requests')
+                ->where('id', $requestId)
+                ->where('status', '!=', 'Released')
+                ->update(['status' => 'Released']);
+        } else {
+            $changed = DB::table('document_requests')
+                ->where('id', $requestId)
+                ->whereNotIn('status', ['For Pick Up', 'Released'])
+                ->update(['status' => 'For Pick Up']);
+        }
 
         if ($changed > 0) {
             $this->auditLogger->logAdmin(
@@ -188,6 +201,7 @@ class AdminSummaryController extends Controller
         $docType = $this->normalizeDocType((string) ($isSample
             ? $request->query('type', $data['document_type'] ?? 'indigency')
             : ($data['document_type'] ?? 'indigency')));
+        $isWalkIn = str_starts_with((string) ($data['tracking_code'] ?? ''), 'WI-');
         $paperKey = (string) $request->query('paper', 'A4');
         if (! array_key_exists($paperKey, self::PAPER_SIZES)) {
             $paperKey = 'A4';
@@ -208,6 +222,7 @@ class AdminSummaryController extends Controller
             'data' => $data,
             'requestId' => (int) ($requestId ?? 0),
             'isSample' => $isSample,
+            'isWalkIn' => $isWalkIn,
             'needsCompletion' => ! $isSample && ! in_array($data['status'] ?? '', ['For Pick Up', 'Released'], true),
             'docType' => $docType,
             'fullName' => $fullName,
@@ -222,7 +237,7 @@ class AdminSummaryController extends Controller
             'paperKey' => $paperKey,
             'paper' => self::PAPER_SIZES[$paperKey],
             'markPrintedUrl' => route('admin.summary.printed'),
-            'dashboardUrl' => route('admin.dashboard', ['view' => 'pickup']),
+            'dashboardUrl' => route('admin.dashboard', ['view' => $isWalkIn ? 'completed' : 'pickup']),
         ]);
     }
 
