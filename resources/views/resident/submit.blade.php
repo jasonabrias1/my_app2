@@ -158,24 +158,26 @@
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
+                        <div class="form-row document-copy-row">
+                            <div class="form-group document-type-field">
                                 <label for="request_type">Type of Document <span class="req-mark">*</span></label>
-                                <select name="request_type" id="request_type" required>
-                                    <option value="">Documents</option>
-                                    <option value="Barangay Certificate / Clearance">Barangay Certificate / Clearance</option>
-                                    <option value="Certificate of Residency">Certificate of Residency</option>
-                                    <option value="Certificate of Indigency">Certificate of Indigency</option>
-                                    <option value="Certificate of Good Moral Character">Good Moral Character</option>
-                                    <option value="First-Time Job Seeker">First-Time Job Seeker</option>
-                                    <option value="Barangay Business Clearance">Barangay Business Clearance</option>
-                                </select>
+                                <div class="document-type-select">
+                                    <select name="request_type" id="request_type" required>
+                                        <option value="">Documents</option>
+                                        <option value="Barangay Certificate / Clearance">Barangay Certificate / Clearance</option>
+                                        <option value="Certificate of Residency">Certificate of Residency</option>
+                                        <option value="Certificate of Indigency">Certificate of Indigency</option>
+                                        <option value="Certificate of Good Moral Character">Good Moral Character</option>
+                                        <option value="First-Time Job Seeker">First-Time Job Seeker</option>
+                                        <option value="Barangay Business Clearance">Barangay Business Clearance</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group copies-field">
                                 <label for="copies">Number of Copies <span class="req-mark">*</span></label>
                                 <div class="copy-quantity-control">
                                     <input type="number" name="copies" id="copies" min="1" max="99"
-                                        value="{{ old('copies', 1) }}" required aria-describedby="copies-help">
+                                        value="{{ old('copies', 1) }}" required>
                                     <div class="copy-step-buttons">
                                         <button type="button" data-copy-adjust="1" aria-label="Add one copy">
                                             <i class="ti ti-chevron-up" aria-hidden="true"></i>
@@ -185,7 +187,6 @@
                                         </button>
                                     </div>
                                 </div>
-                                <small id="copies-help">Starts at 1. Choose up to 99 copies.</small>
                             </div>
                         </div>
 
