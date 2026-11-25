@@ -29,7 +29,7 @@
     </a>
 
     @php($docRequestsTotal = ($counts['Pending'] ?? 0) + ($counts['PickUp'] ?? 0) + ($counts['Released'] ?? 0) + ($counts['Cancelled'] ?? 0))
-    <button type="button" class="nav-link nav-parent-toggle {{ $isRequestView ? 'expanded' : '' }}"
+    <button type="button" class="nav-link nav-parent-toggle {{ $isRequestView ? 'nav-parent-expanded' : '' }}"
         aria-expanded="{{ $isRequestView ? 'true' : 'false' }}" aria-controls="doc-requests-submenu"
         onclick="toggleNavGroup('doc-requests')"
         style="text-align:left;padding:11px 6px 11px 12px;gap:4px;">
@@ -39,27 +39,30 @@
             <i class="fas fa-chevron-down nav-chevron" style="font-size:10px;"></i>
         </span>
     </button>
-    <div class="nav-submenu {{ $isRequestView ? 'open' : '' }}" id="doc-requests-submenu">
-        <a href="{{ route('admin.dashboard', ['view' => 'pending']) }}"
-            class="nav-link nav-sublink {{ $currentDashboardView === 'pending' ? 'active' : '' }}">
-            <span><i class="fas fa-hourglass-half nav-icon"></i>Pending</span>
-            <span class="nav-badge">{{ $counts['Pending'] ?? 0 }}</span>
-        </a>
-        <a href="{{ route('admin.dashboard', ['view' => 'pickup']) }}"
-            class="nav-link nav-sublink {{ $currentDashboardView === 'pickup' ? 'active' : '' }}">
-            <span><i class="fas fa-box-archive nav-icon"></i>For Pick Up</span>
-            <span class="nav-badge">{{ $counts['PickUp'] ?? 0 }}</span>
-        </a>
-        <a href="{{ route('admin.dashboard', ['view' => 'completed']) }}"
-            class="nav-link nav-sublink {{ $currentDashboardView === 'completed' ? 'active' : '' }}">
-            <span><i class="fas fa-circle-check nav-icon"></i>Completed</span>
-            <span class="nav-badge">{{ $counts['Released'] ?? 0 }}</span>
-        </a>
-        <a href="{{ route('admin.dashboard', ['view' => 'cancelled']) }}"
-            class="nav-link nav-sublink {{ $currentDashboardView === 'cancelled' ? 'active' : '' }}">
-            <span><i class="fas fa-ban nav-icon"></i>Cancelled</span>
-            <span class="nav-badge">{{ $counts['Cancelled'] ?? 0 }}</span>
-        </a>
+    <div class="nav-submenu {{ $isRequestView ? 'nav-submenu-expanded' : '' }}" id="doc-requests-submenu"
+        aria-hidden="{{ $isRequestView ? 'false' : 'true' }}">
+        <div class="nav-submenu-content">
+            <a href="{{ route('admin.dashboard', ['view' => 'pending']) }}"
+                class="nav-link nav-sublink {{ $currentDashboardView === 'pending' ? 'active' : '' }}">
+                <span><i class="fas fa-hourglass-half nav-icon"></i>Pending</span>
+                <span class="nav-badge">{{ $counts['Pending'] ?? 0 }}</span>
+            </a>
+            <a href="{{ route('admin.dashboard', ['view' => 'pickup']) }}"
+                class="nav-link nav-sublink {{ $currentDashboardView === 'pickup' ? 'active' : '' }}">
+                <span><i class="fas fa-box-archive nav-icon"></i>For Pick Up</span>
+                <span class="nav-badge">{{ $counts['PickUp'] ?? 0 }}</span>
+            </a>
+            <a href="{{ route('admin.dashboard', ['view' => 'completed']) }}"
+                class="nav-link nav-sublink {{ $currentDashboardView === 'completed' ? 'active' : '' }}">
+                <span><i class="fas fa-circle-check nav-icon"></i>Completed</span>
+                <span class="nav-badge">{{ $counts['Released'] ?? 0 }}</span>
+            </a>
+            <a href="{{ route('admin.dashboard', ['view' => 'cancelled']) }}"
+                class="nav-link nav-sublink {{ $currentDashboardView === 'cancelled' ? 'active' : '' }}">
+                <span><i class="fas fa-ban nav-icon"></i>Cancelled</span>
+                <span class="nav-badge">{{ $counts['Cancelled'] ?? 0 }}</span>
+            </a>
+        </div>
     </div>
 
     <div class="nav-section-label">Residents</div>
@@ -67,7 +70,7 @@
         class="nav-link {{ request()->routeIs('admin.walkin') ? 'active' : '' }}">
         <span><i class="fas fa-person-walking nav-icon"></i>Walk-in Request</span>
     </a>
-    <button type="button" class="nav-link nav-parent-toggle {{ $isAccountsView ? 'expanded' : '' }}"
+    <button type="button" class="nav-link nav-parent-toggle {{ $isAccountsView ? 'nav-parent-expanded' : '' }}"
         aria-expanded="{{ $isAccountsView ? 'true' : 'false' }}" aria-controls="accounts-submenu"
         onclick="toggleNavGroup('accounts')"
         style="text-align:left;padding:11px 6px 11px 12px;gap:4px;">
@@ -76,25 +79,28 @@
             <i class="fas fa-chevron-down nav-chevron" style="font-size:10px;"></i>
         </span>
     </button>
-    <div class="nav-submenu {{ $isAccountsView ? 'open' : '' }}" id="accounts-submenu">
-        <a href="{{ route('admin.residents') }}"
-            class="nav-link nav-sublink {{ request()->routeIs('admin.residents') ? 'active' : '' }}">
-            <span><i class="fas fa-users nav-icon"></i>Resident Accounts</span>
-            <span class="nav-badge">{{ $total_residents ?? 0 }}</span>
-        </a>
-        <a href="{{ route('admin.admins') }}"
-            class="nav-link nav-sublink {{ request()->routeIs('admin.admins') ? 'active' : '' }}">
-            <span><i class="fas fa-user-shield nav-icon"></i>Admin Accounts</span>
-            <span class="nav-badge">{{ $total_admins ?? 0 }}</span>
-        </a>
-        <a href="{{ route('admin.accounts', ['type' => 'resident']) }}"
-            class="nav-link nav-sublink {{ request()->routeIs('admin.accounts') && $currentAccountType === 'resident' ? 'active' : '' }}">
-            <span><i class="fas fa-user-plus nav-icon"></i>Create Resident Account</span>
-        </a>
-        <a href="{{ route('admin.accounts', ['type' => 'admin']) }}"
-            class="nav-link nav-sublink {{ request()->routeIs('admin.accounts') && $currentAccountType === 'admin' ? 'active' : '' }}">
-            <span><i class="fas fa-user-shield nav-icon"></i>Create Admin Account</span>
-        </a>
+    <div class="nav-submenu {{ $isAccountsView ? 'nav-submenu-expanded' : '' }}" id="accounts-submenu"
+        aria-hidden="{{ $isAccountsView ? 'false' : 'true' }}">
+        <div class="nav-submenu-content">
+            <a href="{{ route('admin.residents') }}"
+                class="nav-link nav-sublink {{ request()->routeIs('admin.residents') ? 'active' : '' }}">
+                <span><i class="fas fa-users nav-icon"></i>Resident Accounts</span>
+                <span class="nav-badge">{{ $total_residents ?? 0 }}</span>
+            </a>
+            <a href="{{ route('admin.admins') }}"
+                class="nav-link nav-sublink {{ request()->routeIs('admin.admins') ? 'active' : '' }}">
+                <span><i class="fas fa-user-shield nav-icon"></i>Admin Accounts</span>
+                <span class="nav-badge">{{ $total_admins ?? 0 }}</span>
+            </a>
+            <a href="{{ route('admin.accounts', ['type' => 'resident']) }}"
+                class="nav-link nav-sublink {{ request()->routeIs('admin.accounts') && $currentAccountType === 'resident' ? 'active' : '' }}">
+                <span><i class="fas fa-user-plus nav-icon"></i>Create Resident Account</span>
+            </a>
+            <a href="{{ route('admin.accounts', ['type' => 'admin']) }}"
+                class="nav-link nav-sublink {{ request()->routeIs('admin.accounts') && $currentAccountType === 'admin' ? 'active' : '' }}">
+                <span><i class="fas fa-user-shield nav-icon"></i>Create Admin Account</span>
+            </a>
+        </div>
     </div>
 
     <div class="nav-section-label">Reports</div>

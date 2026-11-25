@@ -111,7 +111,7 @@ class AdminResidentPagesTest extends TestCase
             ->assertSee('Create Resident Account')
             ->assertSee('Create Admin Account')
             ->assertSee('id="doc-requests-submenu"', false)
-            ->assertSee('class="nav-submenu open" id="doc-requests-submenu"', false)
+            ->assertSee('class="nav-submenu nav-submenu-expanded" id="doc-requests-submenu"', false)
             ->assertSee('Cancelled')
             ->assertSee(route('admin.audit'), false);
 

@@ -22,8 +22,12 @@ window.addEventListener('resize', function () { if (window.innerWidth > 1000) cl
 
 function toggleNavGroup(groupId) {
     var submenu = document.getElementById(groupId + '-submenu');
-    var toggleBtn = submenu.previousElementSibling;
-    var isOpen = submenu.classList.toggle('open');
-    toggleBtn.classList.toggle('expanded', isOpen);
+    var toggleBtn = document.querySelector('.nav-parent-toggle[aria-controls="' + groupId + '-submenu"]');
+    if (!submenu || !toggleBtn) return;
+
+    var isOpen = toggleBtn.getAttribute('aria-expanded') !== 'true';
+    submenu.classList.toggle('nav-submenu-expanded', isOpen);
+    submenu.setAttribute('aria-hidden', String(!isOpen));
+    toggleBtn.classList.toggle('nav-parent-expanded', isOpen);
     toggleBtn.setAttribute('aria-expanded', String(isOpen));
 }

@@ -111,7 +111,7 @@ class AdminDashboardTest extends TestCase
                 ->assertSee($title)
                 ->assertSee('class="nav-link nav-sublink active"', false)
                 ->assertDontSee('class="nav-link active"', false)
-                ->assertSee('class="nav-submenu open"', false)
+                ->assertSee('class="nav-submenu nav-submenu-expanded"', false)
                 ->assertSee('aria-expanded="true"', false);
 
             $this->assertMatchesRegularExpression(
