@@ -13,6 +13,25 @@ use Tests\TestCase;
 
 class ResidentLoginPageTest extends TestCase
 {
+    public function test_copies_migration_defaults_existing_requests_to_one_copy(): void
+    {
+        Schema::dropIfExists('document_requests');
+        Schema::create('document_requests', function (Blueprint $table): void {
+            $table->id();
+            $table->string('document_type');
+        });
+        DB::table('document_requests')->insert(['document_type' => 'Certificate of Residency']);
+
+        try {
+            $migration = require database_path('migrations/2026_11_25_000001_add_copies_to_document_requests_table.php');
+            $migration->up();
+
+            $this->assertSame(1, DB::table('document_requests')->value('copies'));
+        } finally {
+            Schema::dropIfExists('document_requests');
+        }
+    }
+
     public function test_resident_portal_link_opens_the_laravel_login_page(): void
     {
         $this->get('/')
@@ -87,6 +106,9 @@ class ResidentLoginPageTest extends TestCase
                 ->assertSee(route('resident.logout'), false)
                 ->assertSee('script/resident_submit.js')
                 ->assertSee('maxlength="11"', false)
+                ->assertSee('name="copies"', false)
+                ->assertSee('value="1"', false)
+                ->assertSee('aria-label="Add one copy"', false)
                 ->assertSee('"first_name":"Resident"', false)
                 ->assertSee('"email_address":"resident@example.com"', false)
                 ->assertSee('resident/submit');
@@ -109,6 +131,7 @@ class ResidentLoginPageTest extends TestCase
             $table->id();
             $table->unsignedBigInteger('resident_id');
             $table->string('document_type');
+            $table->unsignedTinyInteger('copies')->default(1);
             $table->text('purpose')->nullable();
             $table->string('first_name');
             $table->string('middle_name')->nullable();
@@ -156,6 +179,7 @@ class ResidentLoginPageTest extends TestCase
                 ])
                 ->post('/resident/submit', [
                     'request_type' => 'Certificate of Residency',
+                    'copies' => 4,
                     'purpose' => 'School enrollment',
                     'relationship_to_resident' => 'You',
                     'first_name' => 'Resident',
@@ -175,6 +199,7 @@ class ResidentLoginPageTest extends TestCase
 
             $this->assertNotNull($request);
             $this->assertSame('Certificate of Residency', $request->document_type);
+            $this->assertSame(4, $request->copies);
             $this->assertSame('Pending', $request->status);
             $this->assertStringStartsWith('BR-', $request->tracking_code);
             $this->assertNotEmpty($request->attachment_photo);
@@ -193,6 +218,7 @@ class ResidentLoginPageTest extends TestCase
                 ])
                 ->post('/resident/submit', [
                     'request_type' => 'Certificate of Residency',
+                    'copies' => 1,
                     'purpose' => 'School enrollment',
                     'relationship_to_resident' => 'You',
                     'first_name' => 'Resident',
@@ -206,6 +232,29 @@ class ResidentLoginPageTest extends TestCase
                 ])
                 ->assertRedirect('/resident/submit')
                 ->assertSessionHasErrors('mobile_number');
+
+            $this->from('/resident/submit')
+                ->withSession([
+                    'resident_id' => 1,
+                    'resident_name' => 'Resident Tester',
+                ])
+                ->post('/resident/submit', [
+                    'request_type' => 'Certificate of Residency',
+                    'copies' => 0,
+                    'purpose' => 'School enrollment',
+                    'relationship_to_resident' => 'You',
+                    'first_name' => 'Resident',
+                    'last_name' => 'Tester',
+                    'address_purok' => 'Purok 1',
+                    'civil_status' => 'Single',
+                    'nationality' => 'Filipino',
+                    'date_of_birth' => '2000-01-01',
+                    'place_of_birth' => 'Homestead',
+                    'mobile_number' => '09123456789',
+                    'valid_id' => UploadedFile::fake()->create('resident-id.pdf', 100, 'application/pdf'),
+                ])
+                ->assertRedirect('/resident/submit')
+                ->assertSessionHasErrors('copies');
         } finally {
             Schema::dropIfExists('document_requests');
         }

@@ -312,6 +312,7 @@ function openDetailsModal(btn) {
 
     addDetailSection(body, 'Request Information', 'fa-file-lines', keepDefined([
         { key: 'document_type', label: 'Document Type', value: data.document_type },
+        { key: 'copies', label: 'Copies Requested', value: data.copies == null ? 1 : data.copies },
         { key: 'purpose', label: 'Purpose', value: data.purpose, fullWidth: true },
         { key: 'status', label: 'Status', value: STATUS_LABELS[data.status] || data.status },
         { key: 'request_date', label: 'Date Filed', value: data.request_date },

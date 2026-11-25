@@ -350,6 +350,7 @@ function setupRequestForm(form, relationshipSelect) {
 
             var rows = [
                 ['Document', fieldValue('request_type') || '—'],
+                ['Copies', fieldValue('copies') || '1'],
                 ['Resident', full || '—'],
                 ['Purok', fieldValue('address_purok') || '—'],
                 ['Mobile Number', fieldValue('mobile_number') || '—'],
@@ -375,6 +376,24 @@ function setupRequestForm(form, relationshipSelect) {
             list.innerHTML = html;
         }
 
+        var copiesInput = document.getElementById('copies');
+        var copyAdjustButtons = document.querySelectorAll('[data-copy-adjust]');
+        function normalizeCopies() {
+            var copies = parseInt(copiesInput.value, 10);
+            if (isNaN(copies)) copies = 1;
+            copiesInput.value = Math.max(1, Math.min(99, copies));
+        }
+
+        for (var copyIndex = 0; copyIndex < copyAdjustButtons.length; copyIndex++) {
+            copyAdjustButtons[copyIndex].addEventListener('click', function () {
+                var change = parseInt(this.getAttribute('data-copy-adjust'), 10);
+                var copies = parseInt(copiesInput.value, 10);
+                if (isNaN(copies)) copies = 1;
+                copiesInput.value = Math.max(1, Math.min(99, copies + change));
+            });
+        }
+        copiesInput.addEventListener('change', normalizeCopies);
+        copiesInput.addEventListener('blur', normalizeCopies);
 
         document.getElementById('btn-next').addEventListener('click', function () {
             if (!validateCurrentStep()) return;

@@ -108,7 +108,7 @@
                 <div id="listWrap" style="display:none;">
                     <table id="listTable">
                         <tr>
-                            <th>No.</th><th>Name</th><th>Type of Documents</th><th>Date</th>
+                            <th>No.</th><th>Name</th><th>Type of Documents</th><th>Copies</th><th>Date</th>
                         </tr>
                         @foreach ($summaryRows as $index => $row)
                             @php
@@ -123,6 +123,7 @@
                                     $row['last_name'] ?? '', $row['suffix'] ?? '',
                                 ], fn ($part) => trim((string) $part) !== ''))) }}</td>
                                 <td>{{ $row['document_type'] ?? '' }}</td>
+                                <td>{{ $row['copies'] ?? 1 }}</td>
                                 <td>{{ $date ? date('M j, Y', $date) : '' }}</td>
                             </tr>
                         @endforeach

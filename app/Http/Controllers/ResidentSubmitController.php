@@ -115,6 +115,7 @@ class ResidentSubmitController extends Controller
 
         $rules = [
             'request_type' => ['required', 'string', 'in:' . implode(',', self::DOCUMENT_TYPES)],
+            'copies' => ['required', 'integer', 'min:1', 'max:99'],
             'purpose' => ['required', 'string'],
             'relationship_to_resident' => ['required', 'string', 'in:' . implode(',', self::RELATIONSHIPS)],
             'first_name' => ['required', 'string', 'max:100'],
@@ -183,6 +184,7 @@ class ResidentSubmitController extends Controller
             $requestId = DB::table('document_requests')->insertGetId([
                 'resident_id' => $residentId,
                 'document_type' => trim($validated['request_type']),
+                'copies' => (int) $validated['copies'],
                 'purpose' => trim($validated['purpose']),
                 'first_name' => trim($validated['first_name']),
                 'middle_name' => trim($validated['middle_name'] ?? ''),

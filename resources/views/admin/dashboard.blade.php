@@ -80,7 +80,7 @@
                 @else
                     <table class="resp-table">
                         <tr class="pt-head">
-                            <th>Tracking Code</th><th>Requestor</th><th>Document</th><th>Status</th>
+                            <th>Tracking Code</th><th>Requestor</th><th>Document</th><th>Copies</th><th>Status</th>
                             <th>Date</th><th>Details</th><th>Print</th>
                         </tr>
                         @foreach ($recent_rows as $r)
@@ -88,6 +88,7 @@
                                 <td data-label="Tracking Code">{{ $r['tracking_code'] ?? '' }}</td>
                                 <td data-label="Requestor">{{ trim(($r['first_name'] ?? '').' '.($r['last_name'] ?? '')) }}</td>
                                 <td data-label="Document">{{ $r['document_type'] ?? '' }}</td>
+                                <td data-label="Copies">{{ $r['copies'] ?? 1 }}</td>
                                 <td data-label="Status"><span class="badge {{ $status_badge_class[$r['status']] ?? '' }}">{{ $status_labels[$r['status']] ?? ($r['status'] ?? '') }}</span></td>
                                 <td data-label="Date">{{ !empty($r['request_date']) ? \Carbon\Carbon::parse($r['request_date'])->format('M j, Y') : '' }}</td>
                                 <td data-label="Details">
@@ -189,7 +190,7 @@
                     <div class="{{ $view === 'pickup' ? 'table-scroll' : '' }}">
                         <table class="resp-table{{ $view === 'pickup' ? ' pickup-table' : '' }}">
                             <tr class="pt-head">
-                                <th>Tracking Code</th><th>Requestor</th><th>Document Type</th>
+                                <th>Tracking Code</th><th>Requestor</th><th>Document Type</th><th>Copies</th>
                                 @if ($view === 'completed')
                                     <th>Purpose</th><th>Contact</th><th>Status</th>
                                 @endif
@@ -206,6 +207,7 @@
                                     <td data-label="Tracking Code">{{ $r['tracking_code'] ?? '' }}</td>
                                     <td data-label="Requestor">{{ trim(($r['first_name'] ?? '').' '.($r['middle_name'] ?? '').' '.($r['last_name'] ?? '').' '.($r['suffix'] ?? '')) }}</td>
                                     <td data-label="Document Type">{{ $r['document_type'] ?? '' }}</td>
+                                    <td data-label="Copies">{{ $r['copies'] ?? 1 }}</td>
                                     @if ($view === 'completed')
                                         <td data-label="Purpose">{{ $r['purpose'] ?? '' }}</td>
                                         <td data-label="Contact">{{ $r['mobile_number'] ?? '' }}@if (!empty($r['email_address']))<br>{{ $r['email_address'] }}@endif</td>

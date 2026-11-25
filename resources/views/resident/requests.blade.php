@@ -102,6 +102,11 @@
                                 <?php echo htmlspecialchars($row['purpose'] ?? ''); ?>
                             </div>
 
+                            <div class="purpose">
+                                <strong>Copies requested:</strong>
+                                <?php echo (int) ($row['copies'] ?? 1); ?>
+                            </div>
+
                             <?php if ($rawCode !== '' && $filter !== 'Completed'): ?>
                                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
                                     <a class="track-link"

@@ -414,6 +414,54 @@ body {
     resize: vertical;
 }
 
+.copy-quantity-control {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.copy-quantity-control input {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+}
+
+.copy-quantity-control input::-webkit-outer-spin-button,
+.copy-quantity-control input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+.copy-quantity-control input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.copy-step-buttons {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+}
+
+.copy-step-buttons button {
+    width: 44px;
+    border: 1px solid #d6c7b8;
+    border-radius: 6px;
+    background: #fff;
+    color: var(--primary-light);
+}
+
+.copy-step-buttons button:hover {
+    background: var(--blue-bg);
+}
+
+#copies-help {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
 
 .form-group select option {
     background-color: #fff;

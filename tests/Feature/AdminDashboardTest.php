@@ -39,6 +39,7 @@ class AdminDashboardTest extends TestCase
             $table->increments('id');
             $table->unsignedInteger('resident_id')->nullable();
             $table->string('document_type');
+            $table->unsignedTinyInteger('copies')->default(1);
             $table->text('purpose')->nullable();
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
@@ -128,7 +129,7 @@ class AdminDashboardTest extends TestCase
             'mobile_number' => '09123456789',
             'email' => 'jordan@example.com',
         ]);
-        $this->insertRequest($residentId, 'Pending', 'Certificate', '2026-03-09 10:00:00', 'BR-MAR-PENDING');
+        $this->insertRequest($residentId, 'Pending', 'Certificate', '2026-03-09 10:00:00', 'BR-MAR-PENDING', 4);
         $this->insertRequest($residentId, 'For Pick Up', 'Certificate', '2026-03-09 11:00:00', 'BR-MAR-PICKUP');
         $this->insertRequest($residentId, 'Released', 'Clearance', '2026-03-10 10:00:00', 'BR-MAR-RELEASED');
         $this->insertRequest($residentId, 'Pending', 'Indigency', '2026-04-09 10:00:00', 'BR-APR-PENDING');
@@ -145,6 +146,7 @@ class AdminDashboardTest extends TestCase
             ->assertSee('March 9, 2026')
             ->assertSee('BR-APR-PENDING')
             ->assertSee('Jordan Resident')
+            ->assertSee('data-label="Copies">4</td>', false)
             ->assertSee('statusValues: [1,1,0]', false)
             ->assertSee('id="analytics-filter"', false)
             ->assertSee('action="'.route('admin.dashboard').'#analytics-filter"', false);
@@ -211,11 +213,19 @@ class AdminDashboardTest extends TestCase
             ->assertHeader('X-Content-Type-Options', 'nosniff');
     }
 
-    private function insertRequest(?int $residentId, string $status, string $documentType, string $date, string $code): int
+    private function insertRequest(
+        ?int $residentId,
+        string $status,
+        string $documentType,
+        string $date,
+        string $code,
+        int $copies = 1,
+    ): int
     {
         return DB::table('document_requests')->insertGetId([
             'resident_id' => $residentId,
             'document_type' => $documentType,
+            'copies' => $copies,
             'purpose' => 'Testing',
             'status' => $status,
             'tracking_code' => $code,
