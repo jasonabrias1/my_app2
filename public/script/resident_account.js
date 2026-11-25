@@ -36,6 +36,31 @@
         }
     }
 
+    function initProfileEditor() {
+        var toggle = document.getElementById('profile-edit-toggle');
+        var cancel = document.getElementById('profile-edit-cancel');
+        var panel = document.getElementById('profile-edit-panel');
+        if (!toggle || !panel) return;
+
+        function setOpen(open) {
+            panel.hidden = !open;
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (open) {
+                var firstField = panel.querySelector('input[name="first_name"]');
+                if (firstField) firstField.focus();
+            }
+        }
+
+        toggle.addEventListener('click', function () {
+            setOpen(panel.hidden);
+        });
+        if (cancel) {
+            cancel.addEventListener('click', function () {
+                setOpen(false);
+            });
+        }
+    }
+
 
     var STRENGTH_LABELS = ['', 'Weak', 'Fair', 'Good', 'Strong'];
 
@@ -159,6 +184,7 @@ function initEyeButtons() {
 document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
     initTabs();
+    initProfileEditor();
     initEyeButtons();
     initPasswordChecks();
     initResendCountdown();

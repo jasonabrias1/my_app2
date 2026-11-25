@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AdminAuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ResidentAccountController extends Controller
 {
+    public function __construct(private readonly AdminAuditLogger $auditLogger)
+    {
+    }
+
     private const OTP_LENGTH = 6;
 
     private const OTP_TTL_SECONDS = 300;
@@ -30,7 +36,20 @@ class ResidentAccountController extends Controller
         }
 
         $account = DB::table('residents')
-            ->select(['fullname', 'email', 'mobile_number', 'password'])
+            ->select([
+                'fullname',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'suffix',
+                'address_purok',
+                'civil_status',
+                'nationality',
+                'date_of_birth',
+                'place_of_birth',
+                'email',
+                'mobile_number',
+            ])
             ->where('id', $residentId)
             ->first();
 
@@ -93,6 +112,19 @@ class ResidentAccountController extends Controller
             'emailSuccess' => $request->session()->get('email_success', ''),
             'passwordError' => $request->session()->get('password_error', ''),
             'passwordSuccess' => $request->session()->get('password_success', ''),
+            'profile' => [
+                'first_name' => $account->first_name ?? '',
+                'middle_name' => $account->middle_name ?? '',
+                'last_name' => $account->last_name ?? '',
+                'suffix' => $account->suffix ?? '',
+                'address_purok' => $account->address_purok ?? '',
+                'civil_status' => $account->civil_status ?? '',
+                'nationality' => $account->nationality ?? '',
+                'date_of_birth' => $account->date_of_birth ?? '',
+                'place_of_birth' => $account->place_of_birth ?? '',
+            ],
+            'profileEditOpen' => (bool) $request->session()->get('profile_edit_open', false),
+            'profileSuccess' => $request->session()->get('profile_success', ''),
             'mobileError' => $mobileOtpExpired
                 ? 'Your verification code expired. Please start again.'
                 : $request->session()->get('mobile_error', ''),
@@ -112,6 +144,10 @@ class ResidentAccountController extends Controller
         }
 
         $action = (string) $request->input('action', '');
+        if ($action === 'update_profile') {
+            return $this->updateProfile($request, $residentId);
+        }
+
         $account = DB::table('residents')
             ->select(['email', 'mobile_number', 'password'])
             ->where('id', $residentId)
@@ -246,6 +282,99 @@ class ResidentAccountController extends Controller
         return redirect()->route('resident.account');
     }
 
+    private function updateProfile(Request $request, int|string $residentId): RedirectResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name' => ['required', 'string', 'max:100'],
+            'middle_name' => ['nullable', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'suffix' => ['nullable', 'string', 'max:20'],
+            'address_purok' => ['required', 'in:Purok 1,Purok 2,Purok 3'],
+            'civil_status' => ['required', 'in:Single,Married,Widowed,Separated'],
+            'nationality' => ['required', 'string', 'max:100'],
+            'date_of_birth' => ['required', 'date'],
+            'place_of_birth' => ['required', 'string', 'max:255'],
+        ], [
+            'address_purok.in' => 'Please select a valid Sitio / Purok.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('resident.account')
+                ->withErrors($validator, 'profile')
+                ->withInput()
+                ->with('profile_edit_open', true);
+        }
+
+        $resident = DB::table('residents')
+            ->where('id', $residentId)
+            ->first([
+                'fullname',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'suffix',
+                'address_purok',
+                'civil_status',
+                'nationality',
+                'date_of_birth',
+                'place_of_birth',
+            ]);
+        abort_if(! $resident, 404);
+
+        $profile = $validator->validated();
+        foreach (['first_name', 'middle_name', 'last_name', 'suffix', 'nationality', 'place_of_birth'] as $field) {
+            $profile[$field] = trim((string) ($profile[$field] ?? ''));
+        }
+
+        $fullName = collect([
+            $profile['first_name'],
+            $profile['middle_name'],
+            $profile['last_name'],
+            $profile['suffix'],
+        ])->filter()->implode(' ');
+
+        $labels = [
+            'first_name' => 'first name',
+            'middle_name' => 'middle name',
+            'last_name' => 'last name',
+            'suffix' => 'suffix',
+            'address_purok' => 'address',
+            'civil_status' => 'civil status',
+            'nationality' => 'nationality',
+            'date_of_birth' => 'date of birth',
+            'place_of_birth' => 'place of birth',
+        ];
+        $changedFields = [];
+        foreach ($labels as $field => $label) {
+            if (trim((string) ($resident->{$field} ?? '')) !== (string) $profile[$field]) {
+                $changedFields[] = $label;
+            }
+        }
+        $nameChanges = array_intersect($changedFields, ['first name', 'middle name', 'last name', 'suffix']);
+        if (trim((string) $resident->fullname) !== $fullName && $nameChanges === []) {
+            $changedFields[] = 'full name';
+        }
+
+        if ($changedFields === []) {
+            return redirect()->route('resident.account')
+                ->with('profile_success', 'No changes were made to your personal information.');
+        }
+
+        DB::table('residents')->where('id', $residentId)->update([
+            'fullname' => $fullName,
+            ...$profile,
+        ]);
+        $request->session()->put('resident_name', $fullName);
+        $this->logResident(
+            $request,
+            'Updated personal information',
+            'Resident ID ' . $residentId . '; changed fields: ' . implode(', ', $changedFields),
+        );
+
+        return redirect()->route('resident.account')
+            ->with('profile_success', 'Your personal information has been updated.');
+    }
+
     private function issueMobileOtp(Request $request, string $savedMobile, string $newMobile, int|string $residentId): bool
     {
         $token = (string) config('services.iprog_sms.token');
@@ -318,19 +447,11 @@ class ResidentAccountController extends Controller
 
     private function logResident(Request $request, string $action, string $details = ''): void
     {
-        try {
-            DB::table('audit_trail')->insert([
-                'user_name' => $request->session()->get('resident_name', 'Resident'),
-                'role' => 'Resident',
-                'action' => $action,
-                'details' => $details,
-                'created_at' => now('UTC')->toDateTimeString(),
-            ]);
-        } catch (\Illuminate\Database\QueryException $exception) {
-            Log::warning('Resident audit log failed.', [
-                'action' => $action,
-                'exception' => $exception->getMessage(),
-            ]);
-        }
+        $this->auditLogger->log(
+            (string) $request->session()->get('resident_name', 'Resident'),
+            'Resident',
+            $action,
+            $details,
+        );
     }
 }

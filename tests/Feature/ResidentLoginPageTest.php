@@ -13,6 +13,116 @@ use Tests\TestCase;
 
 class ResidentLoginPageTest extends TestCase
 {
+    public function test_resident_can_edit_personal_information_without_changing_contact_details(): void
+    {
+        Schema::create('residents', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('fullname');
+            $table->string('first_name');
+            $table->string('middle_name')->nullable();
+            $table->string('last_name');
+            $table->string('suffix')->nullable();
+            $table->string('address_purok');
+            $table->string('civil_status');
+            $table->string('nationality');
+            $table->date('date_of_birth');
+            $table->string('place_of_birth');
+            $table->string('email');
+            $table->string('mobile_number');
+        });
+        DB::table('residents')->insert([
+            'id' => 1,
+            'fullname' => 'Resident Tester',
+            'first_name' => 'Resident',
+            'middle_name' => 'A.',
+            'last_name' => 'Tester',
+            'suffix' => '',
+            'address_purok' => 'Purok 1',
+            'civil_status' => 'Single',
+            'nationality' => 'Filipino',
+            'date_of_birth' => '2000-01-01',
+            'place_of_birth' => 'Homestead',
+            'email' => 'resident@example.com',
+            'mobile_number' => '09123456789',
+        ]);
+        Schema::create('audit_trail', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('user_name');
+            $table->string('role');
+            $table->string('action');
+            $table->string('details');
+            $table->dateTime('created_at')->nullable();
+        });
+
+        try {
+            $this->withSession(['resident_id' => 1, 'resident_name' => 'Resident Tester'])
+                ->get('/resident/account')
+                ->assertOk()
+                ->assertSee('Edit information')
+                ->assertSee('name="first_name"', false)
+                ->assertSee('name="place_of_birth"', false)
+                ->assertDontSee('name="email"', false)
+                ->assertDontSee('name="mobile_number"', false);
+
+            $this->withSession(['resident_id' => 1, 'resident_name' => 'Resident Tester'])
+                ->post('/resident/account', [
+                    'action' => 'update_profile',
+                    'first_name' => 'Updated',
+                    'middle_name' => 'B.',
+                    'last_name' => 'Resident',
+                    'suffix' => 'Jr.',
+                    'address_purok' => 'Purok 2',
+                    'civil_status' => 'Married',
+                    'nationality' => 'Filipino',
+                    'date_of_birth' => '2001-02-03',
+                    'place_of_birth' => 'Bambang',
+                    'email' => 'ignored@example.com',
+                    'mobile_number' => '09987654321',
+                ])
+                ->assertRedirect('/resident/account')
+                ->assertSessionHas('profile_success', 'Your personal information has been updated.')
+                ->assertSessionHas('resident_name', 'Updated B. Resident Jr.');
+
+            $resident = DB::table('residents')->where('id', 1)->first();
+            $this->assertSame('Updated B. Resident Jr.', $resident->fullname);
+            $this->assertSame('Purok 2', $resident->address_purok);
+            $this->assertSame('Married', $resident->civil_status);
+            $this->assertSame('2001-02-03', $resident->date_of_birth);
+            $this->assertSame('Bambang', $resident->place_of_birth);
+            $this->assertSame('resident@example.com', $resident->email);
+            $this->assertSame('09123456789', $resident->mobile_number);
+            $this->assertSame('Updated personal information', DB::table('audit_trail')->value('action'));
+            $this->assertStringContainsString('address', DB::table('audit_trail')->value('details'));
+
+            $this->withSession(['resident_id' => 1, 'resident_name' => 'Updated B. Resident Jr.'])
+                ->post('/resident/account', [
+                    'action' => 'update_profile',
+                    'first_name' => 'Updated',
+                    'middle_name' => 'B.',
+                    'last_name' => 'Resident',
+                    'suffix' => 'Jr.',
+                    'address_purok' => 'Invalid Purok',
+                    'civil_status' => 'Married',
+                    'nationality' => 'Filipino',
+                    'date_of_birth' => '2001-02-03',
+                    'place_of_birth' => 'Bambang',
+                ])
+                ->assertRedirect('/resident/account')
+                ->assertSessionHasErrorsIn('profile', ['address_purok'])
+                ->assertSessionHas('profile_edit_open', true);
+
+            $this->assertSame('Purok 2', DB::table('residents')->where('id', 1)->value('address_purok'));
+            $this->withSession(['resident_id' => 1, 'resident_name' => 'Updated B. Resident Jr.'])
+                ->get('/resident/account')
+                ->assertOk()
+                ->assertSee('aria-expanded="true"', false)
+                ->assertSee('Please select a valid Sitio / Purok.');
+        } finally {
+            Schema::dropIfExists('audit_trail');
+            Schema::dropIfExists('residents');
+        }
+    }
+
     public function test_resident_can_cancel_only_their_own_pending_request(): void
     {
         $this->createResidentRequestTables();
@@ -343,6 +453,15 @@ class ResidentLoginPageTest extends TestCase
         Schema::create('residents', function (Blueprint $table): void {
             $table->id();
             $table->string('fullname');
+            $table->string('first_name')->nullable();
+            $table->string('middle_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('suffix')->nullable();
+            $table->string('address_purok')->nullable();
+            $table->string('civil_status')->nullable();
+            $table->string('nationality')->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->string('place_of_birth')->nullable();
             $table->string('email')->nullable();
             $table->string('mobile_number')->nullable();
             $table->string('password');
@@ -350,6 +469,15 @@ class ResidentLoginPageTest extends TestCase
         DB::table('residents')->insert([
             'id' => 1,
             'fullname' => 'Resident Tester',
+            'first_name' => 'Resident',
+            'middle_name' => 'A.',
+            'last_name' => 'Tester',
+            'suffix' => '',
+            'address_purok' => 'Purok 1',
+            'civil_status' => 'Single',
+            'nationality' => 'Filipino',
+            'date_of_birth' => '2000-01-01',
+            'place_of_birth' => 'Homestead',
             'email' => 'resident@example.com',
             'mobile_number' => '09123456789',
             'password' => bcrypt('current-password'),
@@ -563,6 +691,7 @@ class ResidentLoginPageTest extends TestCase
                 ->assertOk()
                 ->assertSee('Account Settings');
         } finally {
+            Schema::dropIfExists('audit_trail');
             Schema::dropIfExists('document_requests');
             Schema::dropIfExists('residents');
         }

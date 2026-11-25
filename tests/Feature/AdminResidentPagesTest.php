@@ -165,6 +165,11 @@ class AdminResidentPagesTest extends TestCase
             'password' => 'private-password-hash',
             'first_name' => 'Riley',
             'last_name' => 'Resident',
+            'address_purok' => 'Purok 2',
+            'civil_status' => 'Married',
+            'nationality' => 'Filipino',
+            'date_of_birth' => '2001-02-03',
+            'place_of_birth' => 'Bambang',
             'mobile_number' => '09123456789',
             'status' => 'Active',
         ]);
@@ -173,6 +178,9 @@ class AdminResidentPagesTest extends TestCase
             ->get(route('admin.residents'))
             ->assertOk()
             ->assertSee('Riley Resident')
+            ->assertSee('Purok 2')
+            ->assertSee('Married')
+            ->assertSee('Bambang')
             ->assertSee('riley@example.com')
             ->assertSee('action="' . route('admin.residents.toggle') . '"', false)
             ->assertDontSee('private-password-hash');

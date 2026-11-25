@@ -82,6 +82,108 @@
                         <span><i class="ti ti-device-mobile"></i> <?php echo htmlspecialchars($mobileInProfile); ?></span>
                     </div>
                 </div>
+                <button type="button" class="profile-edit-toggle" id="profile-edit-toggle"
+                    aria-expanded="<?php echo $profileEditOpen ? 'true' : 'false'; ?>"
+                    aria-controls="profile-edit-panel">
+                    <i class="ti ti-user-edit"></i> Edit information
+                </button>
+            </section>
+
+            <?php if ($profileSuccess): ?>
+                <div class="alert alert-success profile-alert" role="status">
+                    <i class="ti ti-circle-check"></i> <?php echo htmlspecialchars($profileSuccess); ?>
+                </div>
+            <?php endif; ?>
+
+            <section class="profile-edit-card status-card" id="profile-edit-panel" <?php echo $profileEditOpen ? '' : 'hidden'; ?>>
+                <div class="profile-edit-header">
+                    <div class="card-icon blue"><i class="ti ti-user-edit"></i></div>
+                    <div>
+                        <h2>Edit personal information</h2>
+                        <p>Email address and mobile number are managed separately.</p>
+                    </div>
+                </div>
+                <div class="profile-edit-content">
+                    <?php if ($errors->profile->any()): ?>
+                        <div class="alert alert-error" role="alert">
+                            <i class="ti ti-alert-circle"></i>
+                            <div>
+                                <strong>Please review the following fields:</strong>
+                                <ul>
+                                    <?php foreach ($errors->profile->all() as $error): ?>
+                                        <li><?php echo htmlspecialchars($error); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="POST" action="{{ route('resident.account.update') }}" class="profile-edit-form">
+                        @csrf
+                        <input type="hidden" name="action" value="update_profile">
+                        <div class="profile-edit-grid">
+                            <div class="form-group">
+                                <label for="profile_first_name">First name *</label>
+                                <input type="text" id="profile_first_name" name="first_name"
+                                    value="{{ old('first_name', $profile['first_name']) }}" maxlength="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile_middle_name">Middle name</label>
+                                <input type="text" id="profile_middle_name" name="middle_name"
+                                    value="{{ old('middle_name', $profile['middle_name']) }}" maxlength="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile_last_name">Last name *</label>
+                                <input type="text" id="profile_last_name" name="last_name"
+                                    value="{{ old('last_name', $profile['last_name']) }}" maxlength="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile_suffix">Suffix</label>
+                                <input type="text" id="profile_suffix" name="suffix"
+                                    value="{{ old('suffix', $profile['suffix']) }}" maxlength="20" placeholder="Jr., Sr., III...">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile_address_purok">Sitio / Purok *</label>
+                                <select id="profile_address_purok" name="address_purok" required>
+                                    <option value="">Select a Purok</option>
+                                    @foreach (['Purok 1', 'Purok 2', 'Purok 3'] as $purok)
+                                        <option value="{{ $purok }}" @selected(old('address_purok', $profile['address_purok']) === $purok)>{{ $purok }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile_civil_status">Civil status *</label>
+                                <select id="profile_civil_status" name="civil_status" required>
+                                    <option value="">Select civil status</option>
+                                    @foreach (['Single', 'Married', 'Widowed', 'Separated'] as $civilStatus)
+                                        <option value="{{ $civilStatus }}" @selected(old('civil_status', $profile['civil_status']) === $civilStatus)>{{ $civilStatus }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile_nationality">Nationality *</label>
+                                <input type="text" id="profile_nationality" name="nationality"
+                                    value="{{ old('nationality', $profile['nationality']) }}" maxlength="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile_date_of_birth">Date of birth *</label>
+                                <input type="date" id="profile_date_of_birth" name="date_of_birth"
+                                    value="{{ old('date_of_birth', substr((string) $profile['date_of_birth'], 0, 10)) }}" required>
+                            </div>
+                            <div class="form-group profile-field-wide">
+                                <label for="profile_place_of_birth">Place of birth *</label>
+                                <input type="text" id="profile_place_of_birth" name="place_of_birth"
+                                    value="{{ old('place_of_birth', $profile['place_of_birth']) }}" maxlength="255" required>
+                            </div>
+                        </div>
+                        <div class="profile-edit-actions">
+                            <button type="button" class="link-btn profile-cancel-btn" id="profile-edit-cancel">Cancel</button>
+                            <button type="submit" class="form-submit profile-save-btn">
+                                <i class="ti ti-device-floppy"></i> Save information
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </section>
 
 
