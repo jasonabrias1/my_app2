@@ -23,7 +23,17 @@ class AdminResidentPagesTest extends TestCase
 
         Schema::dropIfExists('audit_trail');
         Schema::dropIfExists('document_requests');
+        Schema::dropIfExists('admins');
         Schema::dropIfExists('residents');
+        Schema::create('admins', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('fullname', 100);
+            $table->string('email', 100)->unique();
+            $table->string('password');
+            $table->string('position', 100);
+            $table->string('mobile_number', 11)->unique();
+            $table->timestamps();
+        });
         Schema::create('residents', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('fullname');
@@ -112,6 +122,39 @@ class AdminResidentPagesTest extends TestCase
             ->assertSessionHasErrors('mobile_number');
 
         $this->assertSame(1, DB::table('residents')->count());
+    }
+
+    public function test_admin_account_form_saves_a_hashed_admin_account(): void
+    {
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->get(route('admin.accounts', ['type' => 'admin']))
+            ->assertOk()
+            ->assertSee('Create Admin Account')
+            ->assertSee('name="account_type" value="admin"', false)
+            ->assertSee('name="position"', false);
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->from(route('admin.accounts', ['type' => 'admin']))
+            ->post(route('admin.accounts.store', ['type' => 'admin']), $this->validAdmin())
+            ->assertRedirect(route('admin.accounts', ['type' => 'admin']))
+            ->assertSessionHas('created_account_name', 'Morgan A. Admin');
+
+        $admin = DB::table('admins')->where('email', 'admin@example.com')->first();
+        $this->assertNotNull($admin);
+        $this->assertSame('Morgan A. Admin', $admin->fullname);
+        $this->assertSame('Barangay Secretary', $admin->position);
+        $this->assertSame('09987654321', $admin->mobile_number);
+        $this->assertTrue(Hash::check('admin-password', $admin->password));
+        $this->assertNotSame('admin-password', $admin->password);
+        $this->assertSame('Created admin account', DB::table('audit_trail')->value('action'));
+
+        $this->post(route('admin.login.store'), [
+            'email' => 'admin@example.com',
+            'password' => 'admin-password',
+        ])
+            ->assertRedirect(route('admin.dashboard'))
+            ->assertSessionHas('admin_id', $admin->id)
+            ->assertSessionHas('admin_name', 'Morgan A. Admin');
     }
 
     public function test_resident_list_never_renders_password_and_status_can_be_toggled(): void
@@ -261,6 +304,21 @@ class AdminResidentPagesTest extends TestCase
             'email' => 'resident@example.com',
             'password' => 'resident-password',
             'confirm_password' => 'resident-password',
+        ];
+    }
+
+    private function validAdmin(): array
+    {
+        return [
+            'account_type' => 'admin',
+            'first_name' => 'Morgan',
+            'middle_name' => 'A.',
+            'last_name' => 'Admin',
+            'position' => 'Barangay Secretary',
+            'mobile_number' => '09987654321',
+            'email' => 'admin@example.com',
+            'password' => 'admin-password',
+            'confirm_password' => 'admin-password',
         ];
     }
 }

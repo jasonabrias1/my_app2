@@ -8,7 +8,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AdminResidentController extends Controller
@@ -34,28 +36,50 @@ class AdminResidentController extends Controller
             return $redirect;
         }
 
-        $validator = Validator::make($request->all(), [
+        $accountType = $request->input('account_type', 'resident');
+        $table = $accountType === 'admin' ? 'admins' : 'residents';
+        $rules = [
+            'account_type' => ['sometimes', 'required', 'in:resident,admin'],
             'first_name' => ['required', 'string', 'max:100'],
             'middle_name' => ['nullable', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'suffix' => ['nullable', 'string', 'max:20'],
-            'address_purok' => ['required', 'in:Purok 1,Purok 2,Purok 3'],
-            'civil_status' => ['required', 'in:Single,Married,Widowed,Separated'],
-            'nationality' => ['required', 'string', 'max:100'],
-            'date_of_birth' => ['required', 'date'],
-            'place_of_birth' => ['required', 'string', 'max:255'],
-            'mobile_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'unique:residents,mobile_number'],
-            'email' => ['required', 'email', 'max:100', 'unique:residents,email'],
+            'mobile_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'unique:' . $table . ',mobile_number'],
+            'email' => ['required', 'email', 'max:100', 'unique:' . $table . ',email'],
             'password' => ['required', 'string', 'min:8'],
             'confirm_password' => ['required', 'same:password'],
-        ], [
+        ];
+        if ($accountType === 'admin') {
+            $rules['position'] = [
+                'required',
+                Rule::in([
+                    'Barangay Secretary',
+                    'Barangay Captain',
+                    'Barangay Treasurer',
+                    'Kagawad',
+                    'SK Chairperson',
+                    'Staff',
+                ]),
+            ];
+        } else {
+            $rules += [
+                'address_purok' => ['required', 'in:Purok 1,Purok 2,Purok 3'],
+                'civil_status' => ['required', 'in:Single,Married,Widowed,Separated'],
+                'nationality' => ['required', 'string', 'max:100'],
+                'date_of_birth' => ['required', 'date'],
+                'place_of_birth' => ['required', 'string', 'max:255'],
+            ];
+        }
+
+        $messages = [
             'address_purok.in' => 'Please select a valid Sitio / Purok.',
             'civil_status.in' => 'Please select a valid civil status.',
             'mobile_number.regex' => 'Mobile number must be in the format 09xxxxxxxxx.',
             'mobile_number.unique' => 'An account with that mobile number already exists.',
             'email.unique' => 'An account with that email already exists.',
             'confirm_password.same' => 'Passwords do not match.',
-        ]);
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput($request->except([
@@ -71,6 +95,27 @@ class AdminResidentController extends Controller
             trim($data['last_name']),
             trim($data['suffix'] ?? ''),
         ])->filter()->implode(' ');
+
+        if ($accountType === 'admin') {
+            $admin = [
+                'fullname' => $fullName,
+                'email' => trim($data['email']),
+                'password' => Hash::make($data['password']),
+                'position' => $data['position'],
+                'mobile_number' => trim($data['mobile_number']),
+            ];
+            if (Schema::hasColumn('admins', 'created_at')) {
+                $admin['created_at'] = now();
+            }
+            if (Schema::hasColumn('admins', 'updated_at')) {
+                $admin['updated_at'] = now();
+            }
+
+            DB::table('admins')->insert($admin);
+            $this->auditLogger->logAdmin('Created admin account', $fullName);
+
+            return redirect()->back()->with('created_account_name', $fullName);
+        }
 
         DB::table('residents')->insert([
             'fullname' => $fullName,
@@ -90,7 +135,7 @@ class AdminResidentController extends Controller
 
         $this->auditLogger->logAdmin('Created resident account', $fullName);
 
-        return redirect()->back()->with('created_resident_name', $fullName);
+        return redirect()->back()->with('created_account_name', $fullName);
     }
 
     public function index(Request $request): View|RedirectResponse
