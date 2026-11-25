@@ -29,6 +29,7 @@ class ResidentLoginPageTest extends TestCase
             $table->string('place_of_birth');
             $table->string('email');
             $table->string('mobile_number');
+            $table->string('password');
         });
         DB::table('residents')->insert([
             'id' => 1,
@@ -44,6 +45,7 @@ class ResidentLoginPageTest extends TestCase
             'place_of_birth' => 'Homestead',
             'email' => 'resident@example.com',
             'mobile_number' => '09123456789',
+            'password' => bcrypt('current-password'),
         ]);
         Schema::create('audit_trail', function (Blueprint $table): void {
             $table->increments('id');
@@ -60,7 +62,10 @@ class ResidentLoginPageTest extends TestCase
                 ->assertOk()
                 ->assertSee('Edit information')
                 ->assertSee('name="first_name"', false)
+                ->assertSee("oninput=\"this.value=this.value.replace(/[0-9]/g, '')\"", false)
                 ->assertSee('name="place_of_birth"', false)
+                ->assertSee('minlength="8"', false)
+                ->assertSee('At least 8 characters.', false)
                 ->assertDontSee('name="email"', false)
                 ->assertDontSee('name="mobile_number"', false);
 
@@ -97,7 +102,7 @@ class ResidentLoginPageTest extends TestCase
             $this->withSession(['resident_id' => 1, 'resident_name' => 'Updated B. Resident Jr.'])
                 ->post('/resident/account', [
                     'action' => 'update_profile',
-                    'first_name' => 'Updated',
+                    'first_name' => 'Updated2',
                     'middle_name' => 'B.',
                     'last_name' => 'Resident',
                     'suffix' => 'Jr.',
@@ -108,7 +113,7 @@ class ResidentLoginPageTest extends TestCase
                     'place_of_birth' => 'Bambang',
                 ])
                 ->assertRedirect('/resident/account')
-                ->assertSessionHasErrorsIn('profile', ['address_purok'])
+                ->assertSessionHasErrorsIn('profile', ['address_purok', 'first_name'])
                 ->assertSessionHas('profile_edit_open', true);
 
             $this->assertSame('Purok 2', DB::table('residents')->where('id', 1)->value('address_purok'));
@@ -117,6 +122,17 @@ class ResidentLoginPageTest extends TestCase
                 ->assertOk()
                 ->assertSee('aria-expanded="true"', false)
                 ->assertSee('Please select a valid Sitio / Purok.');
+
+            $this->withSession(['resident_id' => 1, 'resident_name' => 'Updated B. Resident Jr.'])
+                ->post('/resident/account', [
+                    'action' => 'change_password',
+                    'current_password' => 'current-password',
+                    'new_password' => 'éééé',
+                    'confirm_password' => 'éééé',
+                ])
+                ->assertRedirect('/resident/account')
+                ->assertSessionHas('password_error', 'New password must be at least 8 characters long.');
+            $this->assertTrue(Hash::check('current-password', DB::table('residents')->where('id', 1)->value('password')));
         } finally {
             Schema::dropIfExists('audit_trail');
             Schema::dropIfExists('residents');
@@ -294,6 +310,7 @@ class ResidentLoginPageTest extends TestCase
                 ->assertSee(route('resident.logout'), false)
                 ->assertSee('script/resident_submit.js')
                 ->assertSee('maxlength="11"', false)
+                ->assertSee('oninput="this.value=this.value.replace(/[0-9]/g, \'\')"', false)
                 ->assertSee('name="copies"', false)
                 ->assertSee('value="1"', false)
                 ->assertSee('aria-label="Add one copy"', false)
@@ -376,7 +393,7 @@ class ResidentLoginPageTest extends TestCase
                     'civil_status' => 'Single',
                     'nationality' => 'Filipino',
                     'date_of_birth' => '2000-01-01',
-                    'place_of_birth' => 'Homestead',
+                    'place_of_birth' => 'Homestead 2',
                     'mobile_number' => '09123456789',
                     'valid_id' => UploadedFile::fake()->create('resident-id.pdf', 100, 'application/pdf'),
                 ])
@@ -387,6 +404,7 @@ class ResidentLoginPageTest extends TestCase
 
             $this->assertNotNull($request);
             $this->assertSame('Certificate of Residency', $request->document_type);
+            $this->assertSame('Homestead 2', $request->place_of_birth);
             $this->assertSame(4, $request->copies);
             $this->assertSame('Pending', $request->status);
             $this->assertStringStartsWith('BR-', $request->tracking_code);
@@ -409,7 +427,7 @@ class ResidentLoginPageTest extends TestCase
                     'copies' => 1,
                     'purpose' => 'School enrollment',
                     'relationship_to_resident' => 'You',
-                    'first_name' => 'Resident',
+                    'first_name' => 'Resident2',
                     'last_name' => 'Tester',
                     'address_purok' => 'Purok 1',
                     'civil_status' => 'Single',
@@ -419,7 +437,7 @@ class ResidentLoginPageTest extends TestCase
                     'mobile_number' => '091234567890',
                 ])
                 ->assertRedirect('/resident/submit')
-                ->assertSessionHasErrors('mobile_number');
+                ->assertSessionHasErrors(['first_name', 'mobile_number']);
 
             $this->from('/resident/submit')
                 ->withSession([

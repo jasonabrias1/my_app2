@@ -133,6 +133,7 @@ class AdminWalkInControllerTest extends TestCase
             ->assertSee('Walk-in Request')
             ->assertSee('Type of Document')
             ->assertSee('Relationship to the Resident')
+            ->assertSee('oninput="this.value=this.value.replace(/[0-9]/g, \'\')"', false)
             ->assertSee('stylesheet/admin_dashboard.css')
             ->assertSee('stylesheet/admin_create_account.css')
             ->assertSee('script/admin_sidebar.js')
@@ -144,6 +145,19 @@ class AdminWalkInControllerTest extends TestCase
             ])
             ->assertViewHas('total_residents', 1)
             ->assertViewHas('admin_name', 'Office Tester');
+    }
+
+    public function test_walk_in_name_fields_reject_numeric_characters(): void
+    {
+        foreach (['first_name' => 'Walk2', 'requestor_first_name' => 'Requestor2'] as $field => $value) {
+            $this->withSession(['admin_id' => 7, 'admin_name' => 'Office Tester'])
+                ->from('/admin/walkin')
+                ->post('/admin/walkin', $this->validSubmission([$field => $value]))
+                ->assertRedirect('/admin/walkin')
+                ->assertSessionHasErrors($field);
+        }
+
+        $this->assertSame(0, DB::table('document_requests')->count());
     }
 
     public function test_self_walk_in_submission_uses_a_disabled_placeholder_and_records_tracking_and_audit(): void
@@ -191,6 +205,12 @@ class AdminWalkInControllerTest extends TestCase
 
     public function test_conditional_fields_are_required_and_a_job_seeker_proxy_request_can_be_saved(): void
     {
+        $this->withSession(['admin_id' => 7, 'admin_name' => 'Office Tester'])
+            ->from('/admin/walkin')
+            ->post('/admin/walkin', $this->validSubmission(['first_name' => 'Walk2']))
+            ->assertRedirect('/admin/walkin')
+            ->assertSessionHasErrors('first_name');
+
         $this->withSession(['admin_id' => 7, 'admin_name' => 'Office Tester'])
             ->from('/admin/walkin')
             ->post('/admin/walkin', $this->validSubmission([

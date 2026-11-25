@@ -98,7 +98,13 @@ class AdminResidentPagesTest extends TestCase
             ->assertSee('Create Resident Account')
             ->assertSee('name="_token"', false)
             ->assertSee('maxlength="11"', false)
+            ->assertSee('minlength="8"', false)
+            ->assertSee('At least 8 characters.')
+            ->assertSee("oninput=\"this.value=this.value.replace(/[0-9]/g, '')\"", false)
             ->assertSee(route('admin.residents'), false)
+            ->assertSee('id="accounts-submenu"', false)
+            ->assertSee('Create Resident Account')
+            ->assertSee('Create Admin Account')
             ->assertSee(route('admin.audit'), false);
 
         $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
@@ -111,6 +117,21 @@ class AdminResidentPagesTest extends TestCase
         $this->assertTrue(Hash::check('resident-password', $resident->password));
         $this->assertNotSame('resident-password', $resident->password);
         $this->assertSame('Created resident account', DB::table('audit_trail')->value('action'));
+
+        $invalidResident = $this->validResident();
+        $invalidResident['first_name'] = 'Ada2';
+        $invalidResident['password'] = 'short';
+        $invalidResident['confirm_password'] = 'short';
+        $invalidResident['email'] = 'another-resident@example.com';
+        $invalidResident['mobile_number'] = '09987654321';
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->from(route('admin.accounts'))
+            ->post(route('admin.accounts.store'), $invalidResident)
+            ->assertRedirect(route('admin.accounts'))
+            ->assertSessionHasErrors(['first_name', 'password']);
+
+        $this->assertSame(1, DB::table('residents')->count());
 
         $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
             ->from(route('admin.accounts'))
@@ -131,7 +152,9 @@ class AdminResidentPagesTest extends TestCase
             ->assertOk()
             ->assertSee('Create Admin Account')
             ->assertSee('name="account_type" value="admin"', false)
-            ->assertSee('name="position"', false);
+            ->assertSee('name="position"', false)
+            ->assertSee('minlength="8"', false)
+            ->assertSee('At least 8 characters.');
 
         $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
             ->from(route('admin.accounts', ['type' => 'admin']))
@@ -155,6 +178,21 @@ class AdminResidentPagesTest extends TestCase
             ->assertRedirect(route('admin.dashboard'))
             ->assertSessionHas('admin_id', $admin->id)
             ->assertSessionHas('admin_name', 'Morgan A. Admin');
+
+        $invalidAdmin = $this->validAdmin();
+        $invalidAdmin['first_name'] = 'Morgan2';
+        $invalidAdmin['password'] = 'short';
+        $invalidAdmin['confirm_password'] = 'short';
+        $invalidAdmin['email'] = 'another-admin@example.com';
+        $invalidAdmin['mobile_number'] = '09111222333';
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->from(route('admin.accounts', ['type' => 'admin']))
+            ->post(route('admin.accounts.store', ['type' => 'admin']), $invalidAdmin)
+            ->assertRedirect(route('admin.accounts', ['type' => 'admin']))
+            ->assertSessionHasErrors(['first_name', 'password']);
+
+        $this->assertSame(1, DB::table('admins')->count());
     }
 
     public function test_resident_list_never_renders_password_and_status_can_be_toggled(): void

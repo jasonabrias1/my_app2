@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\NameRules;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -118,10 +119,10 @@ class ResidentSubmitController extends Controller
             'copies' => ['required', 'integer', 'min:1', 'max:99'],
             'purpose' => ['required', 'string'],
             'relationship_to_resident' => ['required', 'string', 'in:' . implode(',', self::RELATIONSHIPS)],
-            'first_name' => ['required', 'string', 'max:100'],
-            'middle_name' => ['nullable', 'string', 'max:100'],
-            'last_name' => ['required', 'string', 'max:100'],
-            'suffix' => ['nullable', 'string', 'max:20'],
+            'first_name' => NameRules::required(),
+            'middle_name' => NameRules::optional(),
+            'last_name' => NameRules::required(),
+            'suffix' => NameRules::optional(20),
             'address_purok' => ['required', 'string', 'in:Purok 1,Purok 2,Purok 3'],
             'civil_status' => ['required', 'string', 'in:Single,Married,Widowed,Separated'],
             'nationality' => ['required', 'string', 'max:100'],
@@ -132,10 +133,10 @@ class ResidentSubmitController extends Controller
             'business_name' => [$isBusiness ? 'required' : 'nullable', 'string', 'max:255'],
             'business_nature' => [$isBusiness ? 'required' : 'nullable', 'string', 'max:255'],
             'business_address' => [$isBusiness ? 'required' : 'nullable', 'string', 'max:255'],
-            'requestor_first_name' => [$isSelf ? 'nullable' : 'required', 'string', 'max:100'],
-            'requestor_middle_name' => ['nullable', 'string', 'max:100'],
-            'requestor_last_name' => [$isSelf ? 'nullable' : 'required', 'string', 'max:100'],
-            'requestor_suffix' => ['nullable', 'string', 'max:20'],
+            'requestor_first_name' => $isSelf ? NameRules::optional() : NameRules::required(),
+            'requestor_middle_name' => NameRules::optional(),
+            'requestor_last_name' => $isSelf ? NameRules::optional() : NameRules::required(),
+            'requestor_suffix' => NameRules::optional(20),
             'requestor_address' => [$isSelf ? 'nullable' : 'required', 'string', 'max:255'],
             'requestor_mobile_number' => [$isSelf ? 'nullable' : 'required', 'regex:/^09[0-9]{9}$/', 'max:11'],
             'requestor_email_address' => ['nullable', 'email', 'max:150'],

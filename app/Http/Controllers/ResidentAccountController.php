@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\AdminAuditLogger;
+use App\Support\NameRules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -183,7 +184,7 @@ class ResidentAccountController extends Controller
             if (! Hash::check($currentPassword, $account->password)) {
                 return $this->accountRedirect('password', 'password_error', 'Your current password is incorrect.');
             }
-            if (strlen($newPassword) < 8) {
+            if (Str::length($newPassword) < 8) {
                 return $this->accountRedirect('password', 'password_error', 'New password must be at least 8 characters long.');
             }
             if ($newPassword !== (string) $request->input('confirm_password', '')) {
@@ -285,10 +286,10 @@ class ResidentAccountController extends Controller
     private function updateProfile(Request $request, int|string $residentId): RedirectResponse
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => ['required', 'string', 'max:100'],
-            'middle_name' => ['nullable', 'string', 'max:100'],
-            'last_name' => ['required', 'string', 'max:100'],
-            'suffix' => ['nullable', 'string', 'max:20'],
+            'first_name' => NameRules::required(),
+            'middle_name' => NameRules::optional(),
+            'last_name' => NameRules::required(),
+            'suffix' => NameRules::optional(20),
             'address_purok' => ['required', 'in:Purok 1,Purok 2,Purok 3'],
             'civil_status' => ['required', 'in:Single,Married,Widowed,Separated'],
             'nationality' => ['required', 'string', 'max:100'],

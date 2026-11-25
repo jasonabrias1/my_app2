@@ -575,6 +575,10 @@ body {
 .pw-wrap input {
   padding-right: 48px;
 }
+.password-note {
+  color: var(--muted);
+  font-size: 12px;
+}
 .pw-toggle {
   position: absolute;
   top: 50%;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\AdminAuditLogger;
 use App\Services\AdminPageData;
+use App\Support\NameRules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -40,10 +41,10 @@ class AdminResidentController extends Controller
         $table = $accountType === 'admin' ? 'admins' : 'residents';
         $rules = [
             'account_type' => ['sometimes', 'required', 'in:resident,admin'],
-            'first_name' => ['required', 'string', 'max:100'],
-            'middle_name' => ['nullable', 'string', 'max:100'],
-            'last_name' => ['required', 'string', 'max:100'],
-            'suffix' => ['nullable', 'string', 'max:20'],
+            'first_name' => NameRules::required(),
+            'middle_name' => NameRules::optional(),
+            'last_name' => NameRules::required(),
+            'suffix' => NameRules::optional(20),
             'mobile_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'unique:' . $table . ',mobile_number'],
             'email' => ['required', 'email', 'max:100', 'unique:' . $table . ',email'],
             'password' => ['required', 'string', 'min:8'],

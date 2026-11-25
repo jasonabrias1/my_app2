@@ -40,19 +40,23 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>First Name <span class="req-mark">*</span></label>
-                        <input type="text" name="first_name" value="{{ old('first_name') }}" required>
+                        <input type="text" name="first_name" value="{{ old('first_name') }}"
+                            oninput="this.value=this.value.replace(/[0-9]/g, '')" required>
                     </div>
                     <div class="form-group">
                         <label>Middle Name <span class="opt">(optional)</span></label>
-                        <input type="text" name="middle_name" value="{{ old('middle_name') }}">
+                        <input type="text" name="middle_name" value="{{ old('middle_name') }}"
+                            oninput="this.value=this.value.replace(/[0-9]/g, '')">
                     </div>
                     <div class="form-group">
                         <label>Last Name <span class="req-mark">*</span></label>
-                        <input type="text" name="last_name" value="{{ old('last_name') }}" required>
+                        <input type="text" name="last_name" value="{{ old('last_name') }}"
+                            oninput="this.value=this.value.replace(/[0-9]/g, '')" required>
                     </div>
                     <div class="form-group">
                         <label>Suffix <span class="opt">(optional)</span></label>
-                        <input type="text" name="suffix" value="{{ old('suffix') }}" placeholder="Jr., Sr., III...">
+                        <input type="text" name="suffix" value="{{ old('suffix') }}"
+                            oninput="this.value=this.value.replace(/[0-9]/g, '')" placeholder="Jr., Sr., III...">
                     </div>
                 </div>
 
@@ -131,6 +135,7 @@
                                 onclick="togglePasswordVisibility('passwordInput', this)"
                                 aria-label="Show password" tabindex="-1"><i class="fas fa-eye"></i></button>
                         </div>
+                        <small class="password-note">At least 8 characters.</small>
                     </div>
                     <div class="form-group">
                         <label>Confirm Password <span class="req-mark">*</span></label>
@@ -140,6 +145,7 @@
                                 onclick="togglePasswordVisibility('confirmPasswordInput', this)"
                                 aria-label="Show password" tabindex="-1"><i class="fas fa-eye"></i></button>
                         </div>
+                        <small class="password-note">At least 8 characters.</small>
                     </div>
                 </div>
                 <div class="form-submit-row">

@@ -130,19 +130,23 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>First Name <span class="req-mark">*</span></label>
-                        <input type="text" name="first_name" value="{{ $values['first_name'] }}" required>
+                        <input type="text" name="first_name" value="{{ $values['first_name'] }}"
+                            oninput="this.value=this.value.replace(/[0-9]/g, '')" required>
                     </div>
                     <div class="form-group">
                         <label>Middle Name <span class="opt">(optional)</span></label>
-                        <input type="text" name="middle_name" value="{{ $values['middle_name'] }}">
+                        <input type="text" name="middle_name" value="{{ $values['middle_name'] }}"
+                            oninput="this.value=this.value.replace(/[0-9]/g, '')">
                     </div>
                     <div class="form-group">
                         <label>Last Name <span class="req-mark">*</span></label>
-                        <input type="text" name="last_name" value="{{ $values['last_name'] }}" required>
+                        <input type="text" name="last_name" value="{{ $values['last_name'] }}"
+                            oninput="this.value=this.value.replace(/[0-9]/g, '')" required>
                     </div>
                     <div class="form-group">
                         <label>Suffix <span class="opt">(optional)</span></label>
-                        <input type="text" name="suffix" value="{{ $values['suffix'] }}" placeholder="Jr., Sr., III...">
+                        <input type="text" name="suffix" value="{{ $values['suffix'] }}"
+                            oninput="this.value=this.value.replace(/[0-9]/g, '')" placeholder="Jr., Sr., III...">
                     </div>
                 </div>
 
@@ -202,19 +206,23 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>First Name <span class="req-mark">*</span></label>
-                            <input type="text" name="requestor_first_name" value="{{ $values['requestor_first_name'] }}">
+                            <input type="text" name="requestor_first_name" value="{{ $values['requestor_first_name'] }}"
+                                oninput="this.value=this.value.replace(/[0-9]/g, '')">
                         </div>
                         <div class="form-group">
                             <label>Middle Name <span class="opt">(optional)</span></label>
-                            <input type="text" name="requestor_middle_name" value="{{ $values['requestor_middle_name'] }}">
+                            <input type="text" name="requestor_middle_name" value="{{ $values['requestor_middle_name'] }}"
+                                oninput="this.value=this.value.replace(/[0-9]/g, '')">
                         </div>
                         <div class="form-group">
                             <label>Last Name <span class="req-mark">*</span></label>
-                            <input type="text" name="requestor_last_name" value="{{ $values['requestor_last_name'] }}">
+                            <input type="text" name="requestor_last_name" value="{{ $values['requestor_last_name'] }}"
+                                oninput="this.value=this.value.replace(/[0-9]/g, '')">
                         </div>
                         <div class="form-group">
                             <label>Suffix <span class="opt">(optional)</span></label>
-                            <input type="text" name="requestor_suffix" value="{{ $values['requestor_suffix'] }}">
+                            <input type="text" name="requestor_suffix" value="{{ $values['requestor_suffix'] }}"
+                                oninput="this.value=this.value.replace(/[0-9]/g, '')">
                         </div>
                     </div>
                     <div class="form-row">

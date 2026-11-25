@@ -13,7 +13,7 @@
 <body>
     <?php
     if (!function_exists('residentAccountPwField')) {
-        function residentAccountPwField($id, $name, $label, $placeholder, $extra = '')
+        function residentAccountPwField($id, $name, $label, $placeholder, $extra = '', $note = '')
         {
             return '<div class="form-group">
                 <label for="' . $id . '">' . $label . '</label>
@@ -23,7 +23,7 @@
                     <button type="button" class="pw-toggle" data-target="' . $id . '" aria-label="Show password" aria-pressed="false">
                         <i class="ti ti-eye"></i>
                     </button>
-                </div>
+                </div>' . ($note !== '' ? '<small class="password-note">' . $note . '</small>' : '') . '
             </div>';
         }
     }
@@ -125,22 +125,26 @@
                             <div class="form-group">
                                 <label for="profile_first_name">First name *</label>
                                 <input type="text" id="profile_first_name" name="first_name"
-                                    value="{{ old('first_name', $profile['first_name']) }}" maxlength="100" required>
+                                    value="{{ old('first_name', $profile['first_name']) }}" maxlength="100"
+                                    oninput="this.value=this.value.replace(/[0-9]/g, '')" required>
                             </div>
                             <div class="form-group">
                                 <label for="profile_middle_name">Middle name</label>
                                 <input type="text" id="profile_middle_name" name="middle_name"
-                                    value="{{ old('middle_name', $profile['middle_name']) }}" maxlength="100">
+                                    value="{{ old('middle_name', $profile['middle_name']) }}" maxlength="100"
+                                    oninput="this.value=this.value.replace(/[0-9]/g, '')">
                             </div>
                             <div class="form-group">
                                 <label for="profile_last_name">Last name *</label>
                                 <input type="text" id="profile_last_name" name="last_name"
-                                    value="{{ old('last_name', $profile['last_name']) }}" maxlength="100" required>
+                                    value="{{ old('last_name', $profile['last_name']) }}" maxlength="100"
+                                    oninput="this.value=this.value.replace(/[0-9]/g, '')" required>
                             </div>
                             <div class="form-group">
                                 <label for="profile_suffix">Suffix</label>
                                 <input type="text" id="profile_suffix" name="suffix"
-                                    value="{{ old('suffix', $profile['suffix']) }}" maxlength="20" placeholder="Jr., Sr., III...">
+                                    value="{{ old('suffix', $profile['suffix']) }}" maxlength="20"
+                                    oninput="this.value=this.value.replace(/[0-9]/g, '')" placeholder="Jr., Sr., III...">
                             </div>
                             <div class="form-group">
                                 <label for="profile_address_purok">Sitio / Purok *</label>
@@ -330,9 +334,9 @@
                         @csrf
                         <input type="hidden" name="action" value="change_password">
                         <?php echo residentAccountPwField('current_password', 'current_password', 'Current password', 'Enter your current password'); ?>
-                        <?php echo residentAccountPwField('new_password', 'new_password', 'New password', 'At least 8 characters', 'minlength="8"'); ?>
+                        <?php echo residentAccountPwField('new_password', 'new_password', 'New password', 'At least 8 characters', 'minlength="8"', 'At least 8 characters.'); ?>
                         <div class="strength-text" id="strength" data-level="0" aria-live="polite"></div>
-                        <?php echo residentAccountPwField('confirm_password', 'confirm_password', 'Confirm new password', 'Re-enter new password', 'minlength="8"'); ?>
+                        <?php echo residentAccountPwField('confirm_password', 'confirm_password', 'Confirm new password', 'Re-enter new password', 'minlength="8"', 'At least 8 characters.'); ?>
                         <div class="field-hint" id="match-hint" aria-live="polite"></div>
                         <button type="submit" class="form-submit"><i class="ti ti-device-floppy"></i> Save password</button>
                     </form>

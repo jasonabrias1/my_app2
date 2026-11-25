@@ -11,6 +11,13 @@
     box-sizing: border-box;
 }
 
+.password-note {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 11.5px;
+}
+
 .password-toggle-btn {
     position: absolute;
     top: 50%;
