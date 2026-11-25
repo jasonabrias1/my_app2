@@ -32,6 +32,7 @@ class AdminResidentPagesTest extends TestCase
             $table->string('password');
             $table->string('position', 100);
             $table->string('mobile_number', 11)->unique();
+            $table->string('status', 20)->default('Active');
             $table->timestamps();
         });
         Schema::create('residents', function (Blueprint $table): void {
@@ -75,6 +76,10 @@ class AdminResidentPagesTest extends TestCase
             ->name('admin.residents')->middleware('web');
         Route::post('/__test/admin/residents', [AdminResidentController::class, 'toggleStatus'])
             ->name('admin.residents.toggle')->middleware('web');
+        Route::get('/__test/admin/admins', [AdminResidentController::class, 'admins'])
+            ->name('admin.admins')->middleware('web');
+        Route::post('/__test/admin/admins/status', [AdminResidentController::class, 'toggleAdminStatus'])
+            ->name('admin.admins.toggle')->middleware('web');
         Route::get('/__test/admin/audit', [AdminAuditController::class, 'index'])
             ->name('admin.audit')->middleware('web');
         Route::post('/__test/admin/notification', [AdminNotificationController::class, 'send'])
@@ -105,6 +110,9 @@ class AdminResidentPagesTest extends TestCase
             ->assertSee('id="accounts-submenu"', false)
             ->assertSee('Create Resident Account')
             ->assertSee('Create Admin Account')
+            ->assertSee('id="doc-requests-submenu"', false)
+            ->assertSee('class="nav-submenu open" id="doc-requests-submenu"', false)
+            ->assertSee('Cancelled')
             ->assertSee(route('admin.audit'), false);
 
         $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
@@ -249,6 +257,58 @@ class AdminResidentPagesTest extends TestCase
         $this->assertSame('Active', DB::table('residents')->where('id', 1)->value('status'));
         $this->assertSame(
             'Enabled resident account',
+            DB::table('audit_trail')->orderByDesc('id')->value('action'),
+        );
+    }
+
+    public function test_admin_list_can_disable_and_enable_accounts_without_exposing_passwords(): void
+    {
+        DB::table('admins')->insert([
+            'fullname' => 'Morgan Admin',
+            'email' => 'morgan@example.com',
+            'password' => 'private-admin-password',
+            'position' => 'Barangay Secretary',
+            'mobile_number' => '09123456789',
+            'status' => 'Active',
+        ]);
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->get(route('admin.admins'))
+            ->assertOk()
+            ->assertSee('Morgan Admin')
+            ->assertSee('morgan@example.com')
+            ->assertSee('Barangay Secretary')
+            ->assertSee('Admin Accounts')
+            ->assertSee('Disable')
+            ->assertSee('action="' . route('admin.admins.toggle') . '"', false)
+            ->assertSee(route('admin.admins'), false)
+            ->assertDontSee('private-admin-password');
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->post(route('admin.admins.toggle'), [
+                'admin_id' => 1,
+                'new_status' => 'Disabled',
+            ])
+            ->assertRedirect(route('admin.admins'));
+
+        $this->assertSame('Disabled', DB::table('admins')->where('id', 1)->value('status'));
+        $this->assertSame('Disabled admin account', DB::table('audit_trail')->value('action'));
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->get(route('admin.admins'))
+            ->assertOk()
+            ->assertSee('Enable');
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
+            ->post(route('admin.admins.toggle'), [
+                'admin_id' => 1,
+                'new_status' => 'Active',
+            ])
+            ->assertRedirect(route('admin.admins'));
+
+        $this->assertSame('Active', DB::table('admins')->where('id', 1)->value('status'));
+        $this->assertSame(
+            'Enabled admin account',
             DB::table('audit_trail')->orderByDesc('id')->value('action'),
         );
     }

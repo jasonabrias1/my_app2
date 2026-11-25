@@ -21,6 +21,7 @@ class AdminLoginPageTest extends TestCase
             $table->string('fullname', 100);
             $table->string('email', 100);
             $table->string('password');
+            $table->string('status', 20)->default('Active');
         });
     }
 
@@ -73,6 +74,26 @@ class AdminLoginPageTest extends TestCase
             ->assertRedirect('/admin/login')
             ->assertSessionHas('admin_login_error', 'Invalid admin credentials.')
             ->assertSessionHas('admin_login_email', 'office@example.com');
+
+        $this->assertSame('Failed login attempt', DB::table('audit_trail')->value('action'));
+    }
+
+    public function test_disabled_admin_accounts_cannot_log_in(): void
+    {
+        DB::table('admins')->insert([
+            'fullname' => 'Disabled Admin',
+            'email' => 'disabled@example.com',
+            'password' => Hash::make('secret-password'),
+            'status' => 'Disabled',
+        ]);
+
+        $this->post('/admin/login', [
+            'email' => 'disabled@example.com',
+            'password' => 'secret-password',
+        ])
+            ->assertRedirect('/admin/login')
+            ->assertSessionHas('admin_login_error', 'Invalid admin credentials.')
+            ->assertSessionMissing('admin_id');
 
         $this->assertSame('Failed login attempt', DB::table('audit_trail')->value('action'));
     }

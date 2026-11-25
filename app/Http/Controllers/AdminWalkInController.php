@@ -55,6 +55,7 @@ class AdminWalkInController extends Controller
         'business_name',
         'business_nature',
         'business_address',
+        'copies',
         'relationship_to_resident',
         'first_name',
         'middle_name',
@@ -83,7 +84,7 @@ class AdminWalkInController extends Controller
             return redirect()->route('admin.login');
         }
 
-        $counts = ['Pending' => 0, 'PickUp' => 0, 'Released' => 0];
+        $counts = ['Pending' => 0, 'PickUp' => 0, 'Released' => 0, 'Cancelled' => 0];
         foreach (DB::table('document_requests')
             ->select('status', DB::raw('COUNT(*) as total'))
             ->groupBy('status')
@@ -94,12 +95,15 @@ class AdminWalkInController extends Controller
                 $counts['PickUp'] = (int) $row->total;
             } elseif ($row->status === 'Released') {
                 $counts['Released'] = (int) $row->total;
+            } elseif ($row->status === 'Cancelled') {
+                $counts['Cancelled'] = (int) $row->total;
             }
         }
 
         $adminName = $request->session()->get('admin_name', 'Admin');
         $values = array_fill_keys(self::FIELDS, '');
         $values['nationality'] = 'Filipino';
+        $values['copies'] = 1;
         $values['relationship_to_resident'] = 'You';
 
         foreach (self::FIELDS as $field) {
@@ -112,6 +116,7 @@ class AdminWalkInController extends Controller
         return view('admin.walkin', [
             'counts' => $counts,
             'total_residents' => $this->pageData->totalResidents(),
+            'total_admins' => $this->pageData->totalAdmins(),
             'admin_name' => $adminName,
             'values' => $values,
             'data_privacy' => $dataPrivacy,
@@ -146,6 +151,7 @@ class AdminWalkInController extends Controller
         $rules = [
             'request_type' => ['required', 'string', 'in:'.implode(',', self::DOCUMENT_TYPES)],
             'purpose' => ['required', 'string'],
+            'copies' => ['required', 'integer', 'min:1', 'max:99'],
             'relationship_to_resident' => ['required', 'string', 'in:'.implode(',', self::RELATIONSHIPS)],
             'first_name' => NameRules::required(),
             'middle_name' => NameRules::optional(),
@@ -225,6 +231,7 @@ class AdminWalkInController extends Controller
                 $requestId = DB::table('document_requests')->insertGetId([
                     'resident_id' => $residentId,
                     'document_type' => trim($validated['request_type']),
+                    'copies' => (int) $validated['copies'],
                     'purpose' => trim($validated['purpose']),
                     'first_name' => trim($validated['first_name']),
                     'middle_name' => trim($validated['middle_name'] ?? ''),

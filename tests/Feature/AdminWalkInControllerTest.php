@@ -42,6 +42,7 @@ class AdminWalkInControllerTest extends TestCase
             $table->increments('id');
             $table->unsignedInteger('resident_id');
             $table->string('document_type', 100);
+            $table->unsignedTinyInteger('copies')->default(1);
             $table->text('purpose')->nullable();
             $table->string('first_name', 100);
             $table->string('middle_name', 100)->nullable();
@@ -132,7 +133,12 @@ class AdminWalkInControllerTest extends TestCase
             ->assertOk()
             ->assertSee('Walk-in Request')
             ->assertSee('Type of Document')
+            ->assertSee('name="copies"', false)
+            ->assertSee('value="1"', false)
+            ->assertSee('aria-label="Add one copy"', false)
             ->assertSee('Relationship to the Resident')
+            ->assertDontSee('name="mobile_number"', false)
+            ->assertDontSee('name="email_address"', false)
             ->assertSee('oninput="this.value=this.value.replace(/[0-9]/g, \'\')"', false)
             ->assertSee('stylesheet/admin_dashboard.css')
             ->assertSee('stylesheet/admin_create_account.css')
@@ -142,6 +148,7 @@ class AdminWalkInControllerTest extends TestCase
                 'Pending' => 1,
                 'PickUp' => 1,
                 'Released' => 1,
+                'Cancelled' => 0,
             ])
             ->assertViewHas('total_residents', 1)
             ->assertViewHas('admin_name', 'Office Tester');
@@ -160,12 +167,25 @@ class AdminWalkInControllerTest extends TestCase
         $this->assertSame(0, DB::table('document_requests')->count());
     }
 
+    public function test_walk_in_copy_count_is_limited_to_one_through_ninety_nine(): void
+    {
+        foreach ([0, 100] as $copies) {
+            $this->withSession(['admin_id' => 7, 'admin_name' => 'Office Tester'])
+                ->from('/admin/walkin')
+                ->post('/admin/walkin', $this->validSubmission(['copies' => $copies]))
+                ->assertRedirect('/admin/walkin')
+                ->assertSessionHasErrors('copies');
+        }
+
+        $this->assertSame(0, DB::table('document_requests')->count());
+    }
+
     public function test_self_walk_in_submission_uses_a_disabled_placeholder_and_records_tracking_and_audit(): void
     {
         $residentId = $this->createResident();
 
         $this->withSession(['admin_id' => 7, 'admin_name' => 'Office Tester'])
-            ->post('/admin/walkin', $this->validSubmission())
+            ->post('/admin/walkin', $this->validSubmission(['copies' => 4]))
             ->assertRedirect(route('admin.walkin'));
 
         $request = DB::table('document_requests')->first();
@@ -176,6 +196,7 @@ class AdminWalkInControllerTest extends TestCase
         $this->assertSame('Walk-in request placeholder', $placeholder->fullname);
         $this->assertSame('Disabled', $placeholder->status);
         $this->assertSame('Certificate of Residency', $request->document_type);
+        $this->assertSame(4, $request->copies);
         $this->assertSame('Pending', $request->status);
         $this->assertSame('You', $request->relationship_to_resident);
         $this->assertStringStartsWith('WI-'.date('Y').'-', $request->tracking_code);
@@ -199,6 +220,7 @@ class AdminWalkInControllerTest extends TestCase
                 'Pending' => 1,
                 'PickUp' => 0,
                 'Released' => 0,
+                'Cancelled' => 0,
             ])
             ->assertViewHas('total_residents', 1);
     }
@@ -265,6 +287,7 @@ class AdminWalkInControllerTest extends TestCase
         return array_merge([
             'request_type' => 'Certificate of Residency',
             'purpose' => 'School enrollment',
+            'copies' => 1,
             'relationship_to_resident' => 'You',
             'first_name' => 'Walk-in',
             'last_name' => 'Tester',

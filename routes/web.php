@@ -46,6 +46,8 @@ Route::get('/admin/accounts', [AdminResidentController::class, 'createAccount'])
 Route::post('/admin/accounts', [AdminResidentController::class, 'storeAccount'])->name('admin.accounts.store');
 Route::get('/admin/residents', [AdminResidentController::class, 'index'])->name('admin.residents');
 Route::post('/admin/residents/status', [AdminResidentController::class, 'toggleStatus'])->name('admin.residents.toggle');
+Route::get('/admin/admins', [AdminResidentController::class, 'admins'])->name('admin.admins');
+Route::post('/admin/admins/status', [AdminResidentController::class, 'toggleAdminStatus'])->name('admin.admins.toggle');
 Route::get('/admin/walkin', [AdminWalkInController::class, 'index'])->name('admin.walkin');
 Route::post('/admin/walkin', [AdminWalkInController::class, 'store'])->name('admin.walkin.store');
 Route::get('/admin/summary', [AdminSummaryController::class, 'index'])->name('admin.summary');

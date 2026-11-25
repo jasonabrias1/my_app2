@@ -18,6 +18,22 @@
         .walkin-form textarea, .walkin-form select { width: 100%; box-sizing: border-box; font: inherit; }
         .walkin-form textarea { padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; resize: vertical; }
         .walkin-privacy { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; margin-top: 8px; }
+        .walkin-document-copy-row { align-items: flex-start; gap: 12px; }
+        .walkin-document-copy-row .document-type-field { flex: 1; min-width: 0; }
+        .walkin-document-copy-row .document-type-field select { height: 57px; border-radius: 12px; }
+        .walkin-document-copy-row .copies-field { flex: 0 0 231px; width: 231px; }
+        .walkin-copy-control { display: flex; align-items: center; gap: 6px; height: 57px; }
+        .walkin-document-copy-row .copies-field .walkin-copy-control input { flex: 0 0 170px; width: 170px; height: 57px; padding: 0 10px; border: 1px solid #d6c7b8; border-radius: 12px; font: inherit; text-align: center; }
+        .walkin-copy-control input::-webkit-outer-spin-button,
+        .walkin-copy-control input::-webkit-inner-spin-button { margin: 0; -webkit-appearance: none; }
+        .walkin-copy-control input[type=number] { -moz-appearance: textfield; }
+        .walkin-copy-buttons { display: grid; flex: 0 0 55px; grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 6px; height: 57px; }
+        .walkin-copy-buttons button { width: 55px; border: 1px solid #d6c7b8; border-radius: 8px; background: #fff; color: var(--primary-light); cursor: pointer; }
+        .walkin-copy-buttons button:hover { background: var(--primary-tint); }
+        @media (max-width: 700px) {
+            .walkin-document-copy-row .copies-field { flex: 0 0 100%; width: 100%; }
+            .walkin-document-copy-row .copies-field .walkin-copy-control input { flex: 1; width: auto; }
+        }
     </style>
 </head>
 
@@ -69,8 +85,8 @@
 
                 <div class="form-section-title">Document</div>
 
-                <div class="form-row">
-                    <div class="form-group">
+                <div class="form-row walkin-document-copy-row">
+                    <div class="form-group document-type-field">
                         <label>Type of Document <span class="req-mark">*</span></label>
                         <select name="request_type" id="request_type" required>
                             <option value="">Select</option>
@@ -79,6 +95,24 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group copies-field">
+                        <label for="walkin_copies">Number of Copies <span class="req-mark">*</span></label>
+                        <div class="walkin-copy-control">
+                            <input type="number" name="copies" id="walkin_copies" min="1" max="99"
+                                value="{{ $values['copies'] }}" required>
+                            <div class="walkin-copy-buttons">
+                                <button type="button" data-copy-adjust="1" aria-label="Add one copy">
+                                    <i class="fas fa-chevron-up" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" data-copy-adjust="-1" aria-label="Remove one copy">
+                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
                         <label>Relationship to the Resident <span class="req-mark">*</span></label>
                         <input type="hidden" name="relationship_to_resident" id="relationship_to_resident" value="You">
@@ -186,20 +220,6 @@
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Mobile Number <span class="opt">(optional)</span></label>
-                        <input type="tel" name="mobile_number" value="{{ $values['mobile_number'] }}" placeholder="09xxxxxxxxx"
-                            pattern="09[0-9]{9}" maxlength="11" inputmode="numeric"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <small style="color:var(--muted);font-size:11.5px;">Needed to send the SMS when the document is ready.</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Email Address <span class="opt">(optional)</span></label>
-                        <input type="email" name="email_address" value="{{ $values['email_address'] }}" placeholder="you@example.com">
-                    </div>
-                </div>
-
                 <div class="walkin-extra" id="requestor_fields">
                     <div class="form-section-title">Requestor's Information</div>
                     <div class="walkin-note">The person claiming the document on the resident's behalf.</div>
@@ -253,6 +273,25 @@
     <script>
         var typeSel = document.getElementById('request_type');
         var relSel = document.getElementById('relationship_to_resident');
+        var copiesInput = document.getElementById('walkin_copies');
+        var copyAdjustButtons = document.querySelectorAll('[data-copy-adjust]');
+
+        function normalizeCopies() {
+            var copies = parseInt(copiesInput.value, 10);
+            if (isNaN(copies)) copies = 1;
+            copiesInput.value = Math.max(1, Math.min(99, copies));
+        }
+
+        for (var copyIndex = 0; copyIndex < copyAdjustButtons.length; copyIndex++) {
+            copyAdjustButtons[copyIndex].addEventListener('click', function () {
+                var change = parseInt(this.getAttribute('data-copy-adjust'), 10);
+                var copies = parseInt(copiesInput.value, 10);
+                if (isNaN(copies)) copies = 1;
+                copiesInput.value = Math.max(1, Math.min(99, copies + change));
+            });
+        }
+        copiesInput.addEventListener('change', normalizeCopies);
+        copiesInput.addEventListener('blur', normalizeCopies);
 
         function syncWalkinFields() {
             document.getElementById('biz_fields').classList.toggle('show', typeSel.value === 'Barangay Business Clearance');

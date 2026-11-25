@@ -26,11 +26,11 @@ class AdminLoginController extends Controller
         $password = trim((string) $request->input('password', ''));
 
         $admin = DB::table('admins')
-            ->select(['id', 'fullname', 'email', 'password'])
+            ->select(['id', 'fullname', 'email', 'password', 'status'])
             ->where('email', $email)
             ->first();
 
-        if (! $admin || ! Hash::check($password, $admin->password)) {
+        if (! $admin || $admin->status !== 'Active' || ! Hash::check($password, $admin->password)) {
             $this->auditLogger->log($email, 'Admin', 'Failed login attempt');
 
             return redirect()

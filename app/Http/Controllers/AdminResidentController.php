@@ -104,6 +104,7 @@ class AdminResidentController extends Controller
                 'password' => Hash::make($data['password']),
                 'position' => $data['position'],
                 'mobile_number' => trim($data['mobile_number']),
+                'status' => 'Active',
             ];
             if (Schema::hasColumn('admins', 'created_at')) {
                 $admin['created_at'] = now();
@@ -170,6 +171,46 @@ class AdminResidentController extends Controller
             $this->pageData->for($request),
             ['residents' => $residents],
         ));
+    }
+
+    public function admins(Request $request): View|RedirectResponse
+    {
+        if ($redirect = $this->adminGuard($request)) {
+            return $redirect;
+        }
+
+        $admins = DB::table('admins')
+            ->select(['id', 'fullname', 'email', 'position', 'mobile_number', 'status', 'created_at'])
+            ->orderByDesc('id')
+            ->get();
+
+        return view('admin.admins', array_merge(
+            $this->pageData->for($request),
+            ['admins' => $admins],
+        ));
+    }
+
+    public function toggleAdminStatus(Request $request): RedirectResponse
+    {
+        if ($redirect = $this->adminGuard($request)) {
+            return $redirect;
+        }
+
+        $data = $request->validate([
+            'admin_id' => ['required', 'integer', 'min:1', 'exists:admins,id'],
+            'new_status' => ['required', 'in:Active,Disabled'],
+        ]);
+
+        DB::table('admins')
+            ->where('id', $data['admin_id'])
+            ->update(['status' => $data['new_status']]);
+
+        $this->auditLogger->logAdmin(
+            $data['new_status'] === 'Disabled' ? 'Disabled admin account' : 'Enabled admin account',
+            'Admin ID ' . $data['admin_id'],
+        );
+
+        return redirect()->route('admin.admins');
     }
 
     public function toggleStatus(Request $request): RedirectResponse

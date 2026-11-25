@@ -10,8 +10,8 @@
 
 <div class="sidebar" id="sidebar">
     @php($currentDashboardView = request()->routeIs('admin.dashboard') ? ($view ?? request()->query('view', 'overview')) : null)
-    @php($isRequestView = in_array($currentDashboardView, ['pending', 'pickup', 'completed', 'cancelled'], true))
-    @php($isAccountsView = request()->routeIs('admin.accounts') || request()->routeIs('admin.residents'))
+    @php($isAccountsView = request()->routeIs('admin.accounts') || request()->routeIs('admin.residents') || request()->routeIs('admin.admins'))
+    @php($isRequestView = in_array($currentDashboardView, ['pending', 'pickup', 'completed', 'cancelled'], true) || $isAccountsView)
     @php($currentAccountType = request()->query('type', 'resident') === 'admin' ? 'admin' : 'resident')
     <button type="button" class="sidebar-close" onclick="closeSidebar()" aria-label="Close menu"><i
             class="fas fa-xmark"></i></button>
@@ -81,6 +81,11 @@
             class="nav-link nav-sublink {{ request()->routeIs('admin.residents') ? 'active' : '' }}">
             <span><i class="fas fa-users nav-icon"></i>Resident Accounts</span>
             <span class="nav-badge">{{ $total_residents ?? 0 }}</span>
+        </a>
+        <a href="{{ route('admin.admins') }}"
+            class="nav-link nav-sublink {{ request()->routeIs('admin.admins') ? 'active' : '' }}">
+            <span><i class="fas fa-user-shield nav-icon"></i>Admin Accounts</span>
+            <span class="nav-badge">{{ $total_admins ?? 0 }}</span>
         </a>
         <a href="{{ route('admin.accounts', ['type' => 'resident']) }}"
             class="nav-link nav-sublink {{ request()->routeIs('admin.accounts') && $currentAccountType === 'resident' ? 'active' : '' }}">
