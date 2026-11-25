@@ -85,10 +85,7 @@ class AdminResidentPagesTest extends TestCase
         $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
             ->get(route('admin.accounts'))
             ->assertOk()
-            ->assertSee('Create Account')
-            ->assertSee('name="account_type"', false)
-            ->assertSee('>Resident</option>', false)
-            ->assertSee('>Admin</option>', false)
+            ->assertSee('Create Resident Account')
             ->assertSee('name="_token"', false)
             ->assertSee('maxlength="11"', false)
             ->assertSee(route('admin.residents'), false)
@@ -115,44 +112,6 @@ class AdminResidentPagesTest extends TestCase
             ->assertSessionHasErrors('mobile_number');
 
         $this->assertSame(1, DB::table('residents')->count());
-    }
-
-    public function test_admin_account_can_be_created_and_used_to_sign_in(): void
-    {
-        Schema::dropIfExists('admins');
-        Schema::create('admins', function (Blueprint $table): void {
-            $table->increments('id');
-            $table->string('fullname', 100);
-            $table->string('email', 100)->unique();
-            $table->string('password');
-        });
-
-        $this->withSession(['admin_id' => 1, 'admin_name' => 'Office Tester'])
-            ->post(route('admin.accounts.store'), [
-                'account_type' => 'admin',
-                'first_name' => 'Grace',
-                'last_name' => 'Admin',
-                'email' => 'grace@example.com',
-                'password' => 'admin-password',
-                'confirm_password' => 'admin-password',
-            ])
-            ->assertRedirect(route('admin.accounts'))
-            ->assertSessionHas('created_account_name', 'Grace Admin')
-            ->assertSessionHas('created_account_type', 'admin');
-
-        $admin = DB::table('admins')->where('email', 'grace@example.com')->first();
-        $this->assertNotNull($admin);
-        $this->assertSame('Grace Admin', $admin->fullname);
-        $this->assertTrue(Hash::check('admin-password', $admin->password));
-        $this->assertSame('Created admin account', DB::table('audit_trail')->value('action'));
-
-        $this->post('/admin/login', [
-            'email' => 'grace@example.com',
-            'password' => 'admin-password',
-        ])
-            ->assertRedirect(route('admin.dashboard'))
-            ->assertSessionHas('admin_id', $admin->id)
-            ->assertSessionHas('admin_name', 'Grace Admin');
     }
 
     public function test_resident_list_never_renders_password_and_status_can_be_toggled(): void

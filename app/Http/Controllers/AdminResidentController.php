@@ -34,48 +34,28 @@ class AdminResidentController extends Controller
             return $redirect;
         }
 
-        $accountType = $request->input('account_type');
-        if ($accountType === 'admin') {
-            $request->merge([
-                'password' => trim((string) $request->input('password', '')),
-                'confirm_password' => trim((string) $request->input('confirm_password', '')),
-            ]);
-        }
-
-        $rules = [
-            'account_type' => ['required', 'in:resident,admin'],
+        $validator = Validator::make($request->all(), [
             'first_name' => ['required', 'string', 'max:100'],
             'middle_name' => ['nullable', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'suffix' => ['nullable', 'string', 'max:20'],
-            'email' => ['required', 'email', 'max:100'],
+            'address_purok' => ['required', 'in:Purok 1,Purok 2,Purok 3'],
+            'civil_status' => ['required', 'in:Single,Married,Widowed,Separated'],
+            'nationality' => ['required', 'string', 'max:100'],
+            'date_of_birth' => ['required', 'date'],
+            'place_of_birth' => ['required', 'string', 'max:255'],
+            'mobile_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'unique:residents,mobile_number'],
+            'email' => ['required', 'email', 'max:100', 'unique:residents,email'],
             'password' => ['required', 'string', 'min:8'],
             'confirm_password' => ['required', 'same:password'],
-        ];
-
-        if ($accountType === 'admin') {
-            $rules['email'][] = 'unique:admins,email';
-        } else {
-            $rules += [
-                'address_purok' => ['required', 'in:Purok 1,Purok 2,Purok 3'],
-                'civil_status' => ['required', 'in:Single,Married,Widowed,Separated'],
-                'nationality' => ['required', 'string', 'max:100'],
-                'date_of_birth' => ['required', 'date'],
-                'place_of_birth' => ['required', 'string', 'max:255'],
-                'mobile_number' => ['required', 'regex:/^09\d{9}$/', 'max:11', 'unique:residents,mobile_number'],
-            ];
-            $rules['email'][] = 'unique:residents,email';
-        }
-
-        $messages = [
+        ], [
             'address_purok.in' => 'Please select a valid Sitio / Purok.',
             'civil_status.in' => 'Please select a valid civil status.',
             'mobile_number.regex' => 'Mobile number must be in the format 09xxxxxxxxx.',
             'mobile_number.unique' => 'An account with that mobile number already exists.',
             'email.unique' => 'An account with that email already exists.',
             'confirm_password.same' => 'Passwords do not match.',
-        ];
-        $validator = Validator::make($request->all(), $rules, $messages);
+        ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput($request->except([
@@ -91,21 +71,6 @@ class AdminResidentController extends Controller
             trim($data['last_name']),
             trim($data['suffix'] ?? ''),
         ])->filter()->implode(' ');
-
-        if ($accountType === 'admin') {
-            DB::table('admins')->insert([
-                'fullname' => $fullName,
-                'email' => trim($data['email']),
-                'password' => Hash::make($data['password']),
-            ]);
-
-            $this->auditLogger->logAdmin('Created admin account', $fullName);
-
-            return redirect()->back()->with([
-                'created_account_name' => $fullName,
-                'created_account_type' => 'admin',
-            ]);
-        }
 
         DB::table('residents')->insert([
             'fullname' => $fullName,
@@ -125,10 +90,7 @@ class AdminResidentController extends Controller
 
         $this->auditLogger->logAdmin('Created resident account', $fullName);
 
-        return redirect()->back()->with([
-            'created_account_name' => $fullName,
-            'created_account_type' => 'resident',
-        ]);
+        return redirect()->back()->with('created_resident_name', $fullName);
     }
 
     public function index(Request $request): View|RedirectResponse
