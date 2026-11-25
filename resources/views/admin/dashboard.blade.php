@@ -39,7 +39,7 @@
         @endif
 
         @if ($view === 'overview')
-            @php($requestTotal = $counts['Pending'] + $counts['PickUp'] + $counts['Released'])
+            @php($requestTotal = array_sum($counts))
             <div class="stat-grid">
                 <div class="stat-card">
                     <div class="icon icon-pending"><i class="fas fa-hourglass-half"></i></div>
@@ -55,6 +55,11 @@
                     <div class="icon icon-completed"><i class="fas fa-circle-check"></i></div>
                     <div class="num">{{ $counts['Released'] }}</div>
                     <div class="label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon icon-review"><i class="fas fa-ban"></i></div>
+                    <div class="num">{{ $counts['Cancelled'] }}</div>
+                    <div class="label">Cancelled</div>
                 </div>
                 <div class="stat-card">
                     <div class="icon icon-processing"><i class="fas fa-folder-open"></i></div>
@@ -291,9 +296,10 @@
         </script>
     @endif
     @if ($view === 'overview')
+        @php($statusValues = array_values($analytics['counts']))
         <script>
             var ANALYTICS_DATA = {
-                statusValues: @json([$analytics['counts']['Pending'], $analytics['counts']['PickUp'], $analytics['counts']['Released']]),
+                statusValues: @json($statusValues),
                 typeLabels: @json(array_keys($analytics['byType'])),
                 typeValues: @json(array_values($analytics['byType'])),
                 monthLabels: @json(array_keys($analytics['byMonth'])),

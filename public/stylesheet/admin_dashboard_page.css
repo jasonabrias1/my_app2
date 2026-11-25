@@ -4,10 +4,11 @@
 
 
 .badge-pending, .badge-pickup, .icon-pending, .icon-pickup { background: none; color: #6b4a3a; }
+.badge-cancelled { background: #fee2e2; color: #b91c1c; }
 .btn.notified, .btn.notified:disabled { background: none; color: #6b4a3a; cursor: default; opacity: 1; }
 
 
-.stat-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; overflow: visible; }
+.stat-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 20px; overflow: visible; }
 .stat-grid .stat-card { min-width: 0; }
 @media (max-width: 1100px) { .stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

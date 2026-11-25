@@ -10,7 +10,7 @@
 
 <div class="sidebar" id="sidebar">
     @php($currentDashboardView = request()->routeIs('admin.dashboard') ? ($view ?? request()->query('view', 'overview')) : null)
-    @php($isRequestView = in_array($currentDashboardView, ['pending', 'pickup', 'completed'], true))
+    @php($isRequestView = in_array($currentDashboardView, ['pending', 'pickup', 'completed', 'cancelled'], true))
     @php($isAccountsView = request()->routeIs('admin.accounts'))
     @php($currentAccountType = request()->query('type', 'resident') === 'admin' ? 'admin' : 'resident')
     <button type="button" class="sidebar-close" onclick="closeSidebar()" aria-label="Close menu"><i
@@ -28,7 +28,7 @@
         <span><i class="fas fa-grip nav-icon"></i>Dashboard</span>
     </a>
 
-    @php($docRequestsTotal = ($counts['Pending'] ?? 0) + ($counts['PickUp'] ?? 0) + ($counts['Released'] ?? 0))
+    @php($docRequestsTotal = ($counts['Pending'] ?? 0) + ($counts['PickUp'] ?? 0) + ($counts['Released'] ?? 0) + ($counts['Cancelled'] ?? 0))
     <button type="button" class="nav-link nav-parent-toggle {{ $isRequestView ? 'expanded' : '' }}"
         aria-expanded="{{ $isRequestView ? 'true' : 'false' }}" aria-controls="doc-requests-submenu"
         onclick="toggleNavGroup('doc-requests')"
@@ -54,6 +54,11 @@
             class="nav-link nav-sublink {{ $currentDashboardView === 'completed' ? 'active' : '' }}">
             <span><i class="fas fa-circle-check nav-icon"></i>Completed</span>
             <span class="nav-badge">{{ $counts['Released'] ?? 0 }}</span>
+        </a>
+        <a href="{{ route('admin.dashboard', ['view' => 'cancelled']) }}"
+            class="nav-link nav-sublink {{ $currentDashboardView === 'cancelled' ? 'active' : '' }}">
+            <span><i class="fas fa-ban nav-icon"></i>Cancelled</span>
+            <span class="nav-badge">{{ $counts['Cancelled'] ?? 0 }}</span>
         </a>
     </div>
 

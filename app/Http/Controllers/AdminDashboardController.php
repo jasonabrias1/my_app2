@@ -39,12 +39,12 @@ class AdminDashboardController extends Controller
         }
 
         $view = $request->query('view', 'overview');
-        $view = is_string($view) && in_array($view, ['overview', 'pending', 'pickup', 'completed'], true)
+        $view = is_string($view) && in_array($view, ['overview', 'pending', 'pickup', 'completed', 'cancelled'], true)
             ? $view
             : 'overview';
         $adminName = $request->session()->get('admin_name', 'Admin');
 
-        $counts = ['Pending' => 0, 'PickUp' => 0, 'Released' => 0];
+        $counts = ['Pending' => 0, 'PickUp' => 0, 'Released' => 0, 'Cancelled' => 0];
         foreach (DB::table('document_requests')->select('status', DB::raw('COUNT(*) AS total'))->groupBy('status')->get() as $row) {
             $key = $row->status === 'For Pick Up' ? 'PickUp' : $row->status;
             if (array_key_exists($key, $counts)) {
@@ -71,7 +71,7 @@ class AdminDashboardController extends Controller
         $analytics = [
             'byType' => [],
             'byMonth' => [],
-            'counts' => ['Pending' => 0, 'PickUp' => 0, 'Released' => 0],
+            'counts' => ['Pending' => 0, 'PickUp' => 0, 'Released' => 0, 'Cancelled' => 0],
             'total' => 0,
             'yearOptions' => [],
         ];
@@ -120,6 +120,7 @@ class AdminDashboardController extends Controller
                 'pending' => 'Pending',
                 'pickup' => 'For Pick Up',
                 'completed' => 'Released',
+                'cancelled' => 'Cancelled',
             ][$view];
             $listingRows = $this->enrichRows(
                 DB::table('document_requests')->where('status', $status)->orderByDesc('request_date')->get()
@@ -146,17 +147,20 @@ class AdminDashboardController extends Controller
                 'Pending' => 'badge-pending',
                 'For Pick Up' => 'badge-pickup',
                 'Released' => 'badge-completed',
+                'Cancelled' => 'badge-cancelled',
             ],
             'status_labels' => [
                 'Pending' => 'Pending',
                 'For Pick Up' => 'For Pick Up',
                 'Released' => 'Completed',
+                'Cancelled' => 'Cancelled',
             ],
             'tab_titles' => [
                 'overview' => 'Dashboard',
                 'pending' => 'Pending Requests',
                 'pickup' => 'For Pick Up',
                 'completed' => 'Completed Requests',
+                'cancelled' => 'Cancelled Requests',
             ],
         ]);
     }

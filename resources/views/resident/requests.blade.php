@@ -63,6 +63,12 @@
             <a href="{{ route('resident.submit') }}" class="new-btn"><i class="ti ti-plus"></i> New request</a>
         </div>
 
+        @if (session('request_notice') || session('request_error'))
+            <div role="status" style="margin:14px 0;padding:12px 16px;border-radius:10px;background:{{ session('request_error') ? '#fee2e2' : '#dcfce7' }};color:{{ session('request_error') ? '#991b1b' : '#166534' }};">
+                {{ session('request_error') ?: session('request_notice') }}
+            </div>
+        @endif
+
         <div class="filter-tabs">
             <a href="{{ route('resident.requests') }}" class="<?php echo $filter === '' ? 'active' : ''; ?>">All</a>
             <?php foreach (array_keys($statusGroups) as $tab): ?>
@@ -86,6 +92,7 @@
                 foreach ($requests as $row):
                     $rowIndex++;
                     $rawCode = trim($row['tracking_code'] ?? '');
+                    $requestStatus = $row['status'] ?? '';
                     ?>
                     <div class="status-row" style="animation-delay: <?php echo min($rowIndex * 0.05, 0.4); ?>s;">
                         <div class="doc-icon"><i class="ti ti-file-text"></i></div>
@@ -107,7 +114,11 @@
                                 <?php echo (int) ($row['copies'] ?? 1); ?>
                             </div>
 
-                            <?php if ($rawCode !== '' && $filter !== 'Completed'): ?>
+                            <?php if ($requestStatus === 'Cancelled'): ?>
+                                <small class="request-cancelled-label">This request was cancelled.</small>
+                            <?php endif; ?>
+
+                            <?php if ($rawCode !== '' && !in_array($requestStatus, ['Released', 'Cancelled'], true)): ?>
                                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
                                     <a class="track-link"
                                         href="{{ route('resident.tracking') }}?auto_track=1&tracking_no=<?php echo urlencode($rawCode); ?>">
@@ -119,6 +130,23 @@
                                         <i class="ti ti-copy"></i>
                                     </button>
                                 </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="status-side">
+                            <?php if ($requestStatus === 'Pending'): ?>
+                                <form method="POST" action="{{ route('resident.requests.cancel', ['requestId' => $row['id']]) }}"
+                                    onsubmit="return confirm('Cancel this pending request?');">
+                                    @csrf
+                                    <button type="submit" class="request-action-btn cancel-request-btn">
+                                        <i class="ti ti-x"></i> Cancel
+                                    </button>
+                                </form>
+                            <?php elseif ($requestStatus === 'Released'): ?>
+                                <a class="request-action-btn view-request-btn"
+                                    href="{{ route('resident.requests.certificate', ['requestId' => $row['id']]) }}"
+                                    target="_blank" rel="noopener">
+                                    <i class="ti ti-eye"></i> View
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>

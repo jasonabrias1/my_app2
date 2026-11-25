@@ -27,6 +27,10 @@ Route::get('/resident/logout', [ResidentDashboardController::class, 'logout'])->
 Route::get('/resident/submit', [ResidentSubmitController::class, 'create'])->name('resident.submit');
 Route::post('/resident/submit', [ResidentSubmitController::class, 'store'])->name('resident.submit.store');
 Route::get('/resident/requests', [ResidentRequestController::class, 'index'])->name('resident.requests');
+Route::post('/resident/requests/{requestId}/cancel', [ResidentRequestController::class, 'cancel'])
+    ->whereNumber('requestId')->name('resident.requests.cancel');
+Route::get('/resident/requests/{requestId}/certificate', [AdminSummaryController::class, 'residentCertificate'])
+    ->whereNumber('requestId')->name('resident.requests.certificate');
 Route::get('/resident/tracking', [ResidentRequestController::class, 'tracking'])->name('resident.tracking');
 Route::post('/resident/tracking', [ResidentRequestController::class, 'tracking'])->name('resident.tracking.search');
 Route::get('/resident/account', [ResidentAccountController::class, 'index'])->name('resident.account');

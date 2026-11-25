@@ -427,6 +427,38 @@ body {
     justify-content: flex-end;
 }
 
+.request-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.cancel-request-btn {
+    background: var(--red-bg);
+    color: var(--red);
+    cursor: pointer;
+}
+
+.view-request-btn {
+    background: var(--blue-bg);
+    color: var(--primary-light);
+}
+
+.request-cancelled-label {
+    color: var(--red);
+    font-weight: 600;
+}
+
 .track-link {
     display: inline-flex;
     align-items: center;

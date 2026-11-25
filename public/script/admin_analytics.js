@@ -48,10 +48,10 @@
             new Chart(statusCanvas, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pending', 'For Pick Up', 'Completed'],
+                    labels: ['Pending', 'For Pick Up', 'Completed', 'Cancelled'],
                     datasets: [{
                         data: statusValues,
-                        backgroundColor: ['#d97706', '#1d4ed8', '#16a34a'],
+                        backgroundColor: ['#d97706', '#1d4ed8', '#16a34a', '#dc2626'],
                         borderWidth: 0
                     }]
                 },

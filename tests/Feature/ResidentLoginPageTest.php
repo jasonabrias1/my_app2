@@ -13,6 +13,84 @@ use Tests\TestCase;
 
 class ResidentLoginPageTest extends TestCase
 {
+    public function test_resident_can_cancel_only_their_own_pending_request(): void
+    {
+        $this->createResidentRequestTables();
+        $this->insertResidentRequest(1, 'Pending', 'BR-PENDING-CANCEL');
+        $this->insertResidentRequest(1, 'Released', 'BR-COMPLETE');
+        $this->insertResidentRequest(2, 'Pending', 'BR-OTHER-RESIDENT');
+
+        try {
+            $this->withSession(['resident_id' => 1, 'resident_name' => 'Resident Tester'])
+                ->get(route('resident.requests'))
+                ->assertOk()
+                ->assertSee('action="' . route('resident.requests.cancel', ['requestId' => 1]) . '"', false)
+                ->assertSee(route('resident.requests.certificate', ['requestId' => 2]), false);
+
+            $this->withSession(['resident_id' => 1, 'resident_name' => 'Resident Tester'])
+                ->post(route('resident.requests.cancel', ['requestId' => 1]))
+                ->assertRedirect(route('resident.requests'))
+                ->assertSessionHas('request_notice', 'Your request has been cancelled.');
+
+            $this->assertSame(
+                'Cancelled',
+                DB::table('document_requests')->where('tracking_code', 'BR-PENDING-CANCEL')->value('status'),
+            );
+            $this->assertSame('Cancelled request', DB::table('audit_trail')->value('action'));
+
+            $this->withSession(['resident_id' => 1])
+                ->post(route('resident.requests.cancel', ['requestId' => 2]))
+                ->assertRedirect(route('resident.requests'))
+                ->assertSessionHas('request_error', 'Only pending requests can be cancelled.');
+
+            $this->withSession(['resident_id' => 1])
+                ->post(route('resident.requests.cancel', ['requestId' => 3]))
+                ->assertNotFound();
+
+            $this->withSession(['resident_id' => 1])
+                ->get(route('resident.requests', ['status' => 'Cancelled']))
+                ->assertOk()
+                ->assertSee('This request was cancelled.');
+        } finally {
+            Schema::dropIfExists('audit_trail');
+            Schema::dropIfExists('document_requests');
+            Schema::dropIfExists('residents');
+        }
+    }
+
+    public function test_resident_can_view_only_their_own_released_certificate(): void
+    {
+        $this->createResidentRequestTables();
+        $this->insertResidentRequest(1, 'Released', 'BR-RESIDENT-CERTIFICATE');
+        $this->insertResidentRequest(1, 'Pending', 'BR-PENDING-CERTIFICATE');
+        $this->insertResidentRequest(2, 'Released', 'BR-OTHER-CERTIFICATE');
+
+        try {
+            $this->get(route('resident.requests.certificate', ['requestId' => 1]))
+                ->assertRedirect(route('resident.login'));
+
+            $this->withSession(['resident_id' => 1])
+                ->get(route('resident.requests.certificate', ['requestId' => 1]))
+                ->assertOk()
+                ->assertSee('View Completed Request')
+                ->assertSee('CERTIFICATE OF RESIDENCY')
+                ->assertSee('BR-RESIDENT-CERTIFICATE')
+                ->assertSee('Print')
+                ->assertDontSee('Did the certificate print successfully?');
+
+            $this->withSession(['resident_id' => 1])
+                ->get(route('resident.requests.certificate', ['requestId' => 2]))
+                ->assertNotFound();
+
+            $this->withSession(['resident_id' => 1])
+                ->get(route('resident.requests.certificate', ['requestId' => 3]))
+                ->assertNotFound();
+        } finally {
+            Schema::dropIfExists('document_requests');
+            Schema::dropIfExists('residents');
+        }
+    }
+
     public function test_copies_migration_defaults_existing_requests_to_one_copy(): void
     {
         Schema::dropIfExists('document_requests');
@@ -417,7 +495,7 @@ class ResidentLoginPageTest extends TestCase
                 ->assertSee('My Requests')
                 ->assertSee('Certificate of Residency')
                 ->assertDontSee('badge badge-pending', false)
-                ->assertDontSee('status-side', false)
+                ->assertSee('class="request-action-btn cancel-request-btn"', false)
                 ->assertSee('Track this request')
                 ->assertSee('copy-btn', false)
                 ->assertSee('resident_request.js');
@@ -473,7 +551,8 @@ class ResidentLoginPageTest extends TestCase
                 ->assertOk()
                 ->assertSee('Certificate of Residency')
                 ->assertSee('Completed')
-                ->assertDontSee('status-side', false)
+                ->assertSee(route('resident.requests.certificate', ['requestId' => 1]), false)
+                ->assertSee('class="request-action-btn view-request-btn"', false)
                 ->assertDontSee('Track this request')
                 ->assertDontSee('copy-btn', false);
 
@@ -487,5 +566,73 @@ class ResidentLoginPageTest extends TestCase
             Schema::dropIfExists('document_requests');
             Schema::dropIfExists('residents');
         }
+    }
+
+    private function createResidentRequestTables(): void
+    {
+        Schema::dropIfExists('audit_trail');
+        Schema::dropIfExists('document_requests');
+        Schema::dropIfExists('residents');
+
+        Schema::create('residents', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('first_name')->nullable();
+            $table->string('middle_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('suffix')->nullable();
+            $table->string('address_purok')->nullable();
+            $table->string('civil_status')->nullable();
+            $table->string('nationality')->nullable();
+        });
+        DB::table('residents')->insert([
+            ['id' => 1, 'first_name' => 'Resident', 'last_name' => 'Tester', 'address_purok' => 'Purok 1'],
+            ['id' => 2, 'first_name' => 'Another', 'last_name' => 'Resident', 'address_purok' => 'Purok 2'],
+        ]);
+
+        Schema::create('document_requests', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->unsignedInteger('resident_id');
+            $table->string('document_type');
+            $table->string('status');
+            $table->string('tracking_code');
+            $table->string('first_name');
+            $table->string('middle_name')->nullable();
+            $table->string('last_name');
+            $table->string('suffix')->nullable();
+            $table->string('address_purok')->nullable();
+            $table->string('civil_status')->nullable();
+            $table->string('nationality')->nullable();
+            $table->text('purpose')->nullable();
+            $table->dateTime('request_date')->nullable();
+            $table->string('business_name')->nullable();
+            $table->string('business_address')->nullable();
+            $table->unsignedTinyInteger('copies')->default(1);
+        });
+
+        Schema::create('audit_trail', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('user_name');
+            $table->string('role');
+            $table->string('action');
+            $table->string('details');
+            $table->dateTime('created_at')->nullable();
+        });
+    }
+
+    private function insertResidentRequest(int $residentId, string $status, string $trackingCode): void
+    {
+        DB::table('document_requests')->insert([
+            'resident_id' => $residentId,
+            'document_type' => 'Certificate of Residency',
+            'status' => $status,
+            'tracking_code' => $trackingCode,
+            'first_name' => 'Resident',
+            'last_name' => 'Tester',
+            'address_purok' => 'Purok 1',
+            'civil_status' => 'Single',
+            'nationality' => 'Filipino',
+            'purpose' => 'School enrollment',
+            'request_date' => now(),
+        ]);
     }
 }

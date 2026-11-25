@@ -101,6 +101,7 @@ class AdminDashboardTest extends TestCase
             'pending' => 'Pending Requests',
             'pickup' => 'For Pick Up',
             'completed' => 'Completed Requests',
+            'cancelled' => 'Cancelled Requests',
         ] as $tab => $title) {
             $response = $this->withSession(['admin_id' => 1])
                 ->get(route('admin.dashboard', ['view' => $tab]));
@@ -147,9 +148,35 @@ class AdminDashboardTest extends TestCase
             ->assertSee('BR-APR-PENDING')
             ->assertSee('Jordan Resident')
             ->assertSee('data-label="Copies">4</td>', false)
-            ->assertSee('statusValues: [1,1,0]', false)
+            ->assertSee('statusValues: [1,1,0,0]', false)
             ->assertSee('id="analytics-filter"', false)
             ->assertSee('action="'.route('admin.dashboard').'#analytics-filter"', false);
+    }
+
+    public function test_admin_can_review_cancelled_resident_requests(): void
+    {
+        $residentId = DB::table('residents')->insertGetId([
+            'fullname' => 'Casey Resident',
+            'first_name' => 'Casey',
+            'last_name' => 'Resident',
+        ]);
+        $this->insertRequest(
+            $residentId,
+            'Cancelled',
+            'Certificate of Residency',
+            '2026-03-09 10:00:00',
+            'BR-CANCELLED',
+            2,
+        );
+
+        $this->withSession(['admin_id' => 1, 'admin_name' => 'Dashboard Tester'])
+            ->get(route('admin.dashboard', ['view' => 'cancelled']))
+            ->assertOk()
+            ->assertSee('Cancelled Requests')
+            ->assertSee('Casey Resident')
+            ->assertSee('Certificate of Residency')
+            ->assertSee('data-label="Copies">2</td>', false)
+            ->assertSee('Cancelled');
     }
 
     public function test_pickup_status_update_releases_request_and_writes_audit_entry(): void

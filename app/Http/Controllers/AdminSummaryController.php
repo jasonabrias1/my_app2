@@ -43,7 +43,7 @@ class AdminSummaryController extends Controller
             ->map(fn ($row) => (array) $row)
             ->all();
 
-        $counts = ['Pending' => 0, 'PickUp' => 0, 'Released' => 0];
+        $counts = ['Pending' => 0, 'PickUp' => 0, 'Released' => 0, 'Cancelled' => 0];
         foreach (DB::table('document_requests')
             ->select('status', DB::raw('COUNT(*) as total'))
             ->groupBy('status')
@@ -54,6 +54,8 @@ class AdminSummaryController extends Controller
                 $counts['PickUp'] = (int) $row->total;
             } elseif ($row->status === 'Released') {
                 $counts['Released'] = (int) $row->total;
+            } elseif ($row->status === 'Cancelled') {
+                $counts['Cancelled'] = (int) $row->total;
             }
         }
 
@@ -120,14 +122,33 @@ class AdminSummaryController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    private function certificate(Request $request): View
+    public function residentCertificate(Request $request, int $requestId): View|RedirectResponse
     {
-        $requestId = $request->query('id');
+        $residentId = $request->session()->get('resident_id');
+
+        if (! $residentId) {
+            return redirect()->route('resident.login');
+        }
+
+        $record = DB::table('document_requests')
+            ->where('id', $requestId)
+            ->where('resident_id', $residentId)
+            ->where('status', 'Released')
+            ->first();
+
+        abort_unless($record, 404);
+
+        return $this->certificate($request, (array) $record, true);
+    }
+
+    private function certificate(Request $request, ?array $requestedData = null, bool $residentView = false): View
+    {
+        $requestId = $requestedData['id'] ?? $request->query('id');
         if ($requestId !== null && (! ctype_digit((string) $requestId) || (int) $requestId < 1)) {
             abort(404);
         }
 
-        $isSample = $requestId === null;
+        $isSample = $requestId === null && $requestedData === null;
         if ($isSample) {
             $data = [
                 'first_name' => 'Juan',
@@ -144,9 +165,9 @@ class AdminSummaryController extends Controller
                 'request_date' => now()->toDateString(),
             ];
         } else {
-            $data = (array) DB::table('document_requests')
+            $data = $requestedData ?? ((array) DB::table('document_requests')
                 ->where('id', (int) $requestId)
-                ->first() ?? [];
+                ->first() ?? []);
             if ($data === []) {
                 abort(404, 'Request not found.');
             }
@@ -223,7 +244,9 @@ class AdminSummaryController extends Controller
             'requestId' => (int) ($requestId ?? 0),
             'isSample' => $isSample,
             'isWalkIn' => $isWalkIn,
-            'needsCompletion' => ! $isSample && ! in_array($data['status'] ?? '', ['For Pick Up', 'Released'], true),
+            'needsCompletion' => ! $residentView && ! $isSample
+                && ! in_array($data['status'] ?? '', ['For Pick Up', 'Released'], true),
+            'residentView' => $residentView,
             'docType' => $docType,
             'fullName' => $fullName,
             'businessName' => trim((string) ($data['business_name'] ?? '')),

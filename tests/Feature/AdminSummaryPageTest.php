@@ -97,6 +97,14 @@ class AdminSummaryPageTest extends TestCase
             'first_name' => 'Done',
             'last_name' => 'Resident',
         ]);
+        $this->insertRequest([
+            'id' => 4,
+            'document_type' => 'Certificate of Residency',
+            'status' => 'Cancelled',
+            'tracking_code' => 'BR-0004',
+            'first_name' => 'Cancelled',
+            'last_name' => 'Resident',
+        ]);
 
         $this->withSession(['admin_id' => 7, 'admin_name' => 'Summary Admin'])
             ->get('/admin/summary')
@@ -108,6 +116,7 @@ class AdminSummaryPageTest extends TestCase
             ->assertSee('data-pending="1"', false)
             ->assertSee('data-pickup="1"', false)
             ->assertSee('data-released="1"', false)
+            ->assertSee('data-cancelled="1"', false)
             ->assertSee('data-residents="1"', false)
             ->assertSee('All requests')
             ->assertSee('data-walkin="1"', false)

@@ -23,6 +23,7 @@ class ResidentRequestController extends Controller
             'Pending' => 'Pending',
             'For Pick Up' => 'For Pick Up',
             'Completed' => 'Released',
+            'Cancelled' => 'Cancelled',
         ];
         $filter = $request->query('status');
         $filter = is_string($filter) && isset($statusGroups[$filter]) ? $filter : '';
@@ -50,6 +51,56 @@ class ResidentRequestController extends Controller
             'initials',
             'uploadPath',
         ));
+    }
+
+    public function cancel(Request $request, int $requestId): RedirectResponse
+    {
+        $residentId = $request->session()->get('resident_id');
+
+        if (! $residentId) {
+            return redirect()->route('resident.login');
+        }
+
+        $record = DB::table('document_requests')
+            ->where('id', $requestId)
+            ->where('resident_id', $residentId)
+            ->first(['id', 'status', 'document_type', 'tracking_code']);
+
+        abort_unless($record, 404);
+
+        if ($record->status !== 'Pending') {
+            return redirect()->route('resident.requests')
+                ->with('request_error', 'Only pending requests can be cancelled.');
+        }
+
+        $updated = DB::table('document_requests')
+            ->where('id', $requestId)
+            ->where('resident_id', $residentId)
+            ->where('status', 'Pending')
+            ->update(['status' => 'Cancelled']);
+
+        if ($updated !== 1) {
+            return redirect()->route('resident.requests')
+                ->with('request_error', 'This request could not be cancelled. Please refresh and try again.');
+        }
+
+        try {
+            DB::table('audit_trail')->insert([
+                'user_name' => $request->session()->get('resident_name', 'Resident'),
+                'role' => 'Resident',
+                'action' => 'Cancelled request',
+                'details' => 'REQ-' . str_pad((string) $record->id, 4, '0', STR_PAD_LEFT)
+                    . ' (' . $record->document_type . ')',
+                'created_at' => now('UTC')->toDateTimeString(),
+            ]);
+        } catch (\Illuminate\Database\QueryException $exception) {
+            Log::warning('Resident audit log failed.', [
+                'action' => 'Cancelled request',
+                'exception' => $exception->getMessage(),
+            ]);
+        }
+
+        return redirect()->route('resident.requests')->with('request_notice', 'Your request has been cancelled.');
     }
 
     public function tracking(Request $request): View|RedirectResponse
