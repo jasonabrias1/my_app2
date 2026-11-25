@@ -1,6 +1,6 @@
-
-function openCreateAccountModal(name) {
-    document.getElementById('createdResidentName').textContent = name;
+function openCreateAccountModal(name, type) {
+    document.getElementById('createdAccountName').textContent = name;
+    document.getElementById('createdAccountTypeLabel').textContent = type === 'admin' ? 'Admin' : 'Resident';
     document.getElementById('createStepSuccess').style.display = 'block';
     document.getElementById('createStepAgain').style.display = 'none';
     document.getElementById('createAccountModal').classList.add('open');
@@ -21,7 +21,6 @@ function resetCreateAccountForm() {
     window.location.href = window.ADMIN_ACCOUNTS_URL;
 }
 
-
 function togglePasswordVisibility(inputId, btn) {
     var input = document.getElementById(inputId);
     var icon = btn.querySelector('i');
@@ -38,9 +37,45 @@ function togglePasswordVisibility(inputId, btn) {
     }
 }
 
+// Show only the fields for the selected account type.
+// Hidden sections are disabled so they are not validated or submitted.
+function applyAccountType() {
+    var type = document.getElementById('accountType').value;
+    var fields = document.getElementById('formFields');
+
+    fields.style.display = type ? 'block' : 'none';
+    document.getElementById('actionInput').value = type === 'admin' ? 'create_admin' : 'create_resident';
+    document.getElementById('infoTitle').textContent =
+        type === 'admin' ? "Admin's Information" : "Resident's Information";
+    document.getElementById('emailHint').textContent =
+        type === 'admin' ? 'Used to log in to the admin portal.' : 'Used to log in to the resident portal.';
+    document.getElementById('submitBtn').textContent =
+        type === 'admin' ? 'Create Admin Account' : 'Create Resident Account';
+
+    document.querySelectorAll('.type-section').forEach(function (section) {
+        var active = section.dataset.type === type;
+        section.classList.toggle('active', active);
+        section.querySelectorAll('input, select, textarea').forEach(function (el) {
+            el.disabled = !active;
+        });
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function () {
-    if (typeof CREATED_RESIDENT_NAME !== 'undefined') {
-        openCreateAccountModal(CREATED_RESIDENT_NAME);
+    var select = document.getElementById('accountType');
+    select.addEventListener('change', applyAccountType);
+    applyAccountType();
+
+    document.getElementById('createAccountForm').addEventListener('submit', function (e) {
+        var pw = document.getElementById('passwordInput').value;
+        var cpw = document.getElementById('confirmPasswordInput').value;
+        if (pw !== cpw) {
+            e.preventDefault();
+            alert('Passwords do not match.');
+        }
+    });
+
+    if (typeof CREATED_ACCOUNT_NAME !== 'undefined') {
+        openCreateAccountModal(CREATED_ACCOUNT_NAME, CREATED_ACCOUNT_TYPE);
     }
 });
